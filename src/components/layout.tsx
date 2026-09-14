@@ -1,16 +1,20 @@
-import {Geist, Geist_Mono} from 'next/font/google';
+import {Geist, TikTok_Sans} from 'next/font/google';
 
-const geistSans = Geist({variable: '--font-geist-sans', subsets: ['latin']});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
+const geist = Geist({
+  variable: '--font-copy',
+  display: 'swap',
+  subsets: ['latin'],
+});
+const tiktok = TikTok_Sans({
+  variable: '--font-headings',
+  display: 'swap',
   subsets: ['latin'],
 });
 
 export default function Layout({children}: {children: React.ReactNode}) {
   return (
     <div
-      className={`${geistSans.variable} ${geistMono.variable} flex min-h-full flex-1 flex-col antialiased`}
+      className={`${geist.variable} ${tiktok.variable} flex min-h-full flex-1 flex-col antialiased`}
     >
       {children}
     </div>
