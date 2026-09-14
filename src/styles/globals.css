@@ -33,6 +33,12 @@
   color: var(--alternate-accent);
 }
 
+body {
+  background: var(--primary-background);
+  color: var(--foreground);
+  font-family: var(--font-copy), sans-serif;
+}
+
 h1,
 h2,
 h3,
@@ -40,10 +46,4 @@ h4,
 h5,
 h6 {
   font-family: var(--font-headings);
-}
-
-body {
-  background: var(--primary-background);
-  color: var(--foreground);
-  font-family: var(--font-copy), sans-serif;
 }

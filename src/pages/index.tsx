@@ -9,7 +9,7 @@ export default function Home() {
             Trackerheart
           </h1>
           <h2 className='text-dh-teal text-2xl leading-10 font-semibold tracking-tight'>
-            A Daggerheart app to track GM & Player resources
+            An unofficial Daggerheart app to track GM & Player resources
           </h2>
           <Tracker />
         </div>
