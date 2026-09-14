@@ -1,3 +1,5 @@
+import Tracker from '../components/Tracker';
+
 export default function Home() {
   return (
     <div className='flex flex-1 flex-col items-center justify-center'>
@@ -9,6 +11,7 @@ export default function Home() {
           <h2 className='text-dh-teal text-2xl leading-10 font-semibold tracking-tight'>
             A Daggerheart app to track GM & Player resources
           </h2>
+          <Tracker />
         </div>
       </main>
     </div>
