@@ -15,6 +15,7 @@ export default function Game({id}: Props) {
   return (
     <>
       <form>
+        <input type='hidden' name='id' value={id ?? ''} />
         <label>
           <span>Game name:</span>
           <input
