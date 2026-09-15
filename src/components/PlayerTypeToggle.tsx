@@ -15,7 +15,7 @@ export default function PlayerTypeToggle({playerType, setPlayerType}: Props) {
   };
 
   return (
-    <footer className='fixed bottom-0 left-0 z-20 w-full border-t p-4 shadow-sm md:p-6'>
+    <footer className='bg-dh-purple fixed bottom-0 left-0 z-20 w-full border-t p-4 shadow-sm md:p-6'>
       <div className='mx-auto flex w-3xs items-center justify-between self-center p-2'>
         <div className='w-16 grow-0 text-right text-xl font-semibold'>
           Game Master
