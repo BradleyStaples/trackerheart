@@ -1,6 +1,13 @@
-import Tracker from '../components/Tracker';
+import {useRouter} from 'next/router';
+import Game from '../../components/Game';
 
-export default function HomePage() {
+export default function GamePage() {
+  const router = useRouter();
+  let id = router.query.id;
+  if (Array.isArray(id)) {
+    id = id[0];
+  }
+
   return (
     <div className='flex flex-1 flex-col items-center justify-center'>
       <main className='flex w-full max-w-3xl flex-1 flex-col items-center justify-between px-16 py-8 sm:items-start'>
@@ -9,11 +16,8 @@ export default function HomePage() {
             <h1 className='text-dh-gold text-3xl font-semibold tracking-tight'>
               Trackerheart
             </h1>
-            <h2 className='text-dh-teal text-2xl font-semibold tracking-tight'>
-              An unofficial Daggerheart app to track GM & Player resources
-            </h2>
           </div>
-          <Tracker />
+          <Game id={id} />
         </div>
       </main>
     </div>

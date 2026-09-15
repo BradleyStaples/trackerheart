@@ -1,9 +1,9 @@
-import {ChangeEvent, Dispatch, SetStateAction} from 'react';
+import {ChangeEvent} from 'react';
 import type {PlayerType} from '../utils/types';
 
 interface Props {
   playerType: PlayerType;
-  setPlayerType: Dispatch<SetStateAction<PlayerType>>;
+  setPlayerType: (newPlayerType: PlayerType) => void;
 }
 
 export default function PlayerTypeToggle({playerType, setPlayerType}: Props) {
