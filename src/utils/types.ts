@@ -5,7 +5,6 @@ export interface Character {
   name: string;
   playerName: string;
   hope: number;
-  maxHope: number;
   stress: number;
   maxStress: number;
   hitPoints: number;

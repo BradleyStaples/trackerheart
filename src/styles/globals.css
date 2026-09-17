@@ -47,3 +47,43 @@ h5,
 h6 {
   font-family: var(--font-headings);
 }
+
+.icon-shield {
+  background-image: url('/icons/shield.svg');
+}
+.icon-shield.checkbox-icon-filled {
+  background-image: url('/icons/shield-filled.svg');
+}
+.icon-shield.checkbox-icon-disabled {
+  background-image: url('/icons/shield-disabled.svg');
+}
+
+.icon-siren {
+  background-image: url('/icons/siren.svg');
+}
+.icon-siren.checkbox-icon-filled {
+  background-image: url('/icons/siren-filled.svg');
+}
+.icon-siren.checkbox-icon-disabled {
+  background-image: url('/icons/siren-disabled.svg');
+}
+
+.icon-cross {
+  background-image: url('/icons/cross.svg');
+}
+.icon-cross.checkbox-icon-filled {
+  background-image: url('/icons/cross-filled.svg');
+}
+.icon-cross.checkbox-icon-disabled {
+  background-image: url('/icons/cross-disabled.svg');
+}
+
+.icon-heart {
+  background-image: url('/icons/heart.svg');
+}
+.icon-heart.checkbox-icon-filled {
+  background-image: url('/icons/heart-filled.svg');
+}
+.icon-heart.checkbox-icon-disabled {
+  background-image: url('/icons/heart-disabled.svg');
+}

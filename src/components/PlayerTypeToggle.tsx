@@ -23,7 +23,7 @@ export default function PlayerTypeToggle({playerType, setPlayerType}: Props) {
         <label className='relative flex w-20 cursor-pointer items-center justify-between p-2 text-xl'>
           <input
             type='checkbox'
-            className='peer absolute left-1/2 h-[85%] w-[85%] -translate-x-1/2 appearance-none rounded-full focus:ring-2 focus:outline-none'
+            className='peer absolute left-1/2 h-[85%] w-[85%] -translate-x-1/2 cursor-pointer appearance-none rounded-full focus:ring-2 focus:ring-violet-900 focus:outline-none'
             onChange={handlePlayerType}
             checked={isPlayer}
           />
