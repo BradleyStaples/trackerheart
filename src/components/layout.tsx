@@ -9,6 +9,7 @@ const tiktok = TikTok_Sans({
   variable: '--font-headings',
   display: 'swap',
   subsets: ['latin'],
+  fallback: ['san-serif'],
 });
 
 export default function Layout({children}: {children: React.ReactNode}) {

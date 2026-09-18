@@ -11,7 +11,7 @@ export default function Character({id}: Props) {
   const character = id ? getCharacter(id) : undefined;
 
   const fieldClasses =
-    'mbe-4 w-full border-1 border-gray-400 bg-white px-2 py-2 focus:ring-3 focus:outline-none ring-yellow-300 text-dh-blue';
+    'mbe-4 w-full border-2 border-gray-700 rounded-sm bg-white px-2 py-1 focus:ring-3 focus:outline-none ring-yellow-300 text-dh-blue';
 
   return (
     <>
@@ -61,7 +61,7 @@ export default function Character({id}: Props) {
           maxValue={character?.maxStress ?? 0}
           maxLimit={12}
           showMaxDropdown
-          icon='siren'
+          icon='star'
         />
         <ResourceIcons
           attribute='armorSlots'

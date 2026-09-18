@@ -1,4 +1,5 @@
 import Button from './Button';
+import ResourceIcons from './ResourceIcons';
 import useDataStore from '../hooks/useDataStore';
 
 interface Props {
@@ -10,14 +11,14 @@ export default function Game({id}: Props) {
   const game = id ? getGame(id) : undefined;
 
   const fieldClasses =
-    'mbe-4 w-full border-1 border-gray-400 bg-white px-2 py-2 focus:ring-3 focus:outline-none ring-yellow-300 text-dh-purple';
+    'mbe-2 w-full border-2 border-teal-400 rounded-sm bg-white px-2 py-1 focus:ring-3 focus:outline-none ring-yellow-300 text-dh-blue';
 
   return (
     <>
-      <form>
+      <form className='mx-auto block w-[340]'>
         <input type='hidden' name='id' value={id ?? ''} />
         <label>
-          <span>Game name:</span>
+          <span className='font-bold'>Game name:</span>
           <input
             type='text'
             name='name'
@@ -26,7 +27,7 @@ export default function Game({id}: Props) {
           />
         </label>
         <label>
-          <span>GameMaster name:</span>
+          <span className='font-bold'>GameMaster name:</span>
           <input
             type='text'
             name='gameMasterName'
@@ -35,7 +36,7 @@ export default function Game({id}: Props) {
           />
         </label>
         <label>
-          <span>Share Code:</span>
+          <span className='font-bold'>Share Code:</span>
           <input
             type='text'
             readOnly
@@ -45,7 +46,7 @@ export default function Game({id}: Props) {
           />
         </label>
         <label>
-          <span>Character Ids:</span>
+          <span className='font-bold'>Character Ids:</span>
           <input
             type='text'
             readOnly
@@ -54,18 +55,21 @@ export default function Game({id}: Props) {
             value={game?.characterIds.join(', ') ?? ''}
           />
         </label>
-        <label>
-          <span>Fear:</span>
-          <input
-            type='text'
-            name='fear'
-            className={fieldClasses}
-            defaultValue={game?.fear ?? ''}
-          />
-        </label>
-        <Button type='submit' label='Save' role='primary' />
+        <ResourceIcons
+          attribute='fear'
+          label='Fear'
+          value={game?.fear ?? 0}
+          maxValue={12}
+          maxLimit={12}
+          icon='skull'
+        />
+        <Button
+          label='Back to Games'
+          role='secondary'
+          link='/?tab=GameMaster'
+        />
+        <Button className='ml-8' type='submit' label='Save' role='primary' />
       </form>
-      <Button label='Back to Games' role='secondary' link='/?tab=GameMaster' />
     </>
   );
 }

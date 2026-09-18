@@ -15,22 +15,17 @@ export default function Player() {
         {characters.map((character) => {
           return (
             <li key={character.id} className='py-2'>
-              <span className='text-lg'>{character.name}</span>
-              <br />
               <Button
-                label='View Character'
+                label={character.name}
                 role='primary'
                 link={`/characters/${character.id}`}
+                className='mbe-1 inline-block text-lg'
               />
             </li>
           );
         })}
       </ul>
-      <Button
-        label='Add New Character'
-        role='secondary'
-        link='/new-character'
-      />
+      <Button label='Add New Character' role='tertiary' link='/new-character' />
     </>
   );
 }

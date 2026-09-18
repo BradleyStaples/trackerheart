@@ -15,18 +15,17 @@ export default function GameMaster() {
         {games.map((game) => {
           return (
             <li key={game.id} className='py-2'>
-              <span className='text-lg'>{game.name}</span>
-              <br />
               <Button
-                label='View Game'
+                label={game.name}
                 role='primary'
                 link={`/games/${game.id}`}
+                className='mbe-1 inline-block text-lg'
               />
             </li>
           );
         })}
       </ul>
-      <Button label='Add New Game' role='secondary' link='/new-game' />
+      <Button label='Add New Game' role='tertiary' link='/new-game' />
     </>
   );
 }

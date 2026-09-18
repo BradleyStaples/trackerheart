@@ -58,14 +58,14 @@ h6 {
   background-image: url('/icons/shield-disabled.svg');
 }
 
-.icon-siren {
-  background-image: url('/icons/siren.svg');
+.icon-star {
+  background-image: url('/icons/star.svg');
 }
-.icon-siren.checkbox-icon-filled {
-  background-image: url('/icons/siren-filled.svg');
+.icon-star.checkbox-icon-filled {
+  background-image: url('/icons/star-filled.svg');
 }
-.icon-siren.checkbox-icon-disabled {
-  background-image: url('/icons/siren-disabled.svg');
+.icon-star.checkbox-icon-disabled {
+  background-image: url('/icons/star-disabled.svg');
 }
 
 .icon-cross {
@@ -86,4 +86,14 @@ h6 {
 }
 .icon-heart.checkbox-icon-disabled {
   background-image: url('/icons/heart-disabled.svg');
+}
+
+.icon-skull {
+  background-image: url('/icons/skull.svg');
+}
+.icon-skull.checkbox-icon-filled {
+  background-image: url('/icons/skull-filled.svg');
+}
+.icon-skull.checkbox-icon-disabled {
+  background-image: url('/icons/skull-disabled.svg');
 }

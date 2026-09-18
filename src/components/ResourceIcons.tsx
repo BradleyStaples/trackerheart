@@ -12,7 +12,7 @@ interface Props {
   icon: string;
 }
 
-export default function CharacterResource({
+export default function ResourceIcons({
   value: initialValue,
   maxValue: initialMaxValue,
   maxLimit,
@@ -67,7 +67,9 @@ export default function CharacterResource({
 
               return (
                 <>
-                  {radioNumber === 7 && <div />}
+                  {radioNumber === 7 && (
+                    <div key={`${attribute}-resource-divider`} />
+                  )}
                   <label
                     className='relative z-10 me-2 inline-block h-6 w-6'
                     key={attribute + radioNumber}
