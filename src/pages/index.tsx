@@ -1,6 +1,9 @@
 import Tracker from '../components/Tracker';
+import useUUID from '../hooks/useUUID';
 
 export default function HomePage() {
+  useUUID();
+
   return (
     <div className='flex flex-1 flex-col items-center justify-center'>
       <main className='flex w-full max-w-3xl flex-1 flex-col items-center justify-between px-16 py-8 sm:items-start'>

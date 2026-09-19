@@ -1,4 +1,4 @@
-import {useState, type ChangeEvent} from 'react';
+import {Fragment, useState, type ChangeEvent} from 'react';
 import classnames from 'classnames';
 import Button from './Button';
 
@@ -66,7 +66,7 @@ export default function ResourceIcons({
               const isDisabled = radioNumber > maxValue;
 
               return (
-                <>
+                <Fragment key={`radio-${attribute}-${radioNumber}`}>
                   {radioNumber === 7 && (
                     <div key={`${attribute}-resource-divider`} />
                   )}
@@ -93,7 +93,7 @@ export default function ResourceIcons({
                       })}
                     ></span>
                   </label>
-                </>
+                </Fragment>
               );
             })}
           </div>
