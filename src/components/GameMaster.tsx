@@ -25,7 +25,7 @@ export default function GameMaster() {
           );
         })}
       </ul>
-      <Button label='Add New Game' role='tertiary' link='/new-game' />
+      <Button label='Add New Game' role='tertiary' link='/games/new' />
     </>
   );
 }

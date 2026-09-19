@@ -1,4 +1,4 @@
-import Character from '../components/Character';
+import Character from '../../components/Character';
 
 export default function NewGamePage() {
   return (

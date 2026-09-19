@@ -25,7 +25,11 @@ export default function Player() {
           );
         })}
       </ul>
-      <Button label='Add New Character' role='tertiary' link='/new-character' />
+      <Button
+        label='Add New Character'
+        role='tertiary'
+        link='/characters/new'
+      />
     </>
   );
 }
