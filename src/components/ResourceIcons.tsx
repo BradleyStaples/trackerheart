@@ -25,7 +25,8 @@ export default function ResourceIcons({
   const [maxValue, setMaxValue] = useState(initialMaxValue);
   const [hasUpdated, setHasUpdated] = useState(false);
   const array = new Array<string>(maxLimit).fill('');
-  const checkboxClasses = 'peer absolute h-6 w-6 appearance-none';
+  const radioClasses =
+    'absolute h-6 w-6 appearance-none focus:outline-none focus-visible:ring-2 focus-visible:ring-dh-blue focus rounded-md';
 
   // handle lack of data coming from dynamic defaulting values to 0 initially
   if (!hasUpdated && (value !== initialValue || maxValue !== initialMaxValue)) {
@@ -75,7 +76,7 @@ export default function ResourceIcons({
                     key={attribute + radioNumber}
                   >
                     <input
-                      className={checkboxClasses}
+                      className={radioClasses}
                       type='radio'
                       name={attribute}
                       checked={radioNumber === value}
