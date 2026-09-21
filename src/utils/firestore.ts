@@ -9,6 +9,7 @@ import {
   doc,
   setDoc,
   updateDoc,
+  deleteDoc,
 } from 'firebase/firestore';
 import type {
   Game,
@@ -249,6 +250,29 @@ export async function addCharacterToGame(
     });
   } catch (error) {
     console.error('Error adding Character to Game:', error);
+    throw error;
+  }
+}
+
+// Looks the mapping up by field rather than by document ID so mappings not
+// created by addCharacterToGame (which uses the characterId as the ID) are
+// removed too.
+export async function removeCharacterFromGame(
+  characterId: string,
+  gameId: string,
+): Promise<void> {
+  try {
+    const q = query(
+      collection(getDb(), 'GameCharacters'),
+      where('characterId', '==', characterId),
+      where('gameId', '==', gameId),
+    );
+    const mappingSnapshot = await getDocs(q);
+    await Promise.all(
+      mappingSnapshot.docs.map((docSnap) => deleteDoc(docSnap.ref)),
+    );
+  } catch (error) {
+    console.error('Error removing Character from Game:', error);
     throw error;
   }
 }

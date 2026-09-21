@@ -11,6 +11,7 @@ import {
   updateCharacter,
   getGameByShareCode,
   addCharacterToGame,
+  removeCharacterFromGame,
 } from '../utils/firestore';
 import {createShareCode} from '../utils/utils';
 
@@ -122,6 +123,11 @@ export default function useDataStore() {
     return game;
   };
 
+  // Unlinks the Character from the Game. Errors are left to the caller so the
+  // UI can report them.
+  const leaveGame = (characterId: string, gameId: string) =>
+    removeCharacterFromGame(characterId, gameId);
+
   return {
     getCharacters,
     getCharacter,
@@ -130,5 +136,6 @@ export default function useDataStore() {
     saveGame,
     saveCharacter,
     joinGame,
+    leaveGame,
   };
 }

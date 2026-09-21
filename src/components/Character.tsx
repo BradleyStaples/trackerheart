@@ -2,6 +2,7 @@ import {useState, type SyntheticEvent} from 'react';
 import {useRouter} from 'next/router';
 import Button from './Button';
 import JoinGame from './JoinGame';
+import LeaveGame from './LeaveGame';
 import ResourceIconsManager from './ResourceIconsManager';
 import ResourceIcons from './ResourceIcons';
 import useDataStore from '../hooks/useDataStore';
@@ -150,6 +151,14 @@ export default function Character({character, game}: Props) {
             icon='skull'
             readOnly
           />
+          {character?.id && (
+            <LeaveGame
+              characterId={character.id}
+              gameId={game.id}
+              label='Leave Game'
+              confirmMessage={`Leave ${game.name}?`}
+            />
+          )}
         </>
       )}
     </>

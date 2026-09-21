@@ -3,6 +3,7 @@ import {useRouter} from 'next/router';
 import Button from './Button';
 import ResourceIconsManager from './ResourceIconsManager';
 import ResourceIcons from './ResourceIcons';
+import LeaveGame from './LeaveGame';
 import useDataStore from '../hooks/useDataStore';
 import type {Game, Character} from '../utils/types';
 
@@ -157,6 +158,14 @@ export default function Game({game, characters}: Props) {
                 icon='shield'
                 readOnly
               />
+              {game?.id && (
+                <LeaveGame
+                  characterId={character.id}
+                  gameId={game.id}
+                  label='Remove from Game'
+                  confirmMessage={`Remove ${character.name} from ${game.name}?`}
+                />
+              )}
             </li>
           );
         })}
