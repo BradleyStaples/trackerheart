@@ -1,4 +1,5 @@
 import Button from './Button';
+import ResourceIconsManager from './ResourceIconsManager';
 import ResourceIcons from './ResourceIcons';
 import {createShareCode} from '../utils/utils';
 import type {Game, Character} from '../utils/types';
@@ -51,7 +52,7 @@ export default function Game({game, characters}: Props) {
             />
           </label>
         )}
-        <ResourceIcons
+        <ResourceIconsManager
           attribute='fear'
           label='Fear'
           value={game?.fear ?? 0}
@@ -76,12 +77,46 @@ export default function Game({game, characters}: Props) {
         )}
         {characters.map((character) => {
           return (
-            <li key={character.id} className='py-2'>
-              <Button
-                label={character.name}
-                role='primary'
-                link={`/characters/${character.id}`}
-                className='mbe-1 inline-block text-lg'
+            <li key={character.id} className='mbe-4'>
+              <h4 className='mbe-4'>
+                <span className='pe-2 font-bold'>{character.name}</span> (
+                {character.playerName})
+              </h4>
+              <ResourceIcons
+                attribute='hope'
+                label='Hope'
+                value={character?.hope ?? 0}
+                maxValue={6}
+                maxLimit={6}
+                icon='heart'
+                readOnly
+              />
+              <ResourceIcons
+                attribute='hitPoints'
+                label='Hit Points'
+                value={character?.hitPoints ?? 0}
+                maxValue={character?.maxHitPoints ?? 0}
+                maxLimit={12}
+                icon='cross'
+                readOnly
+              />
+              <ResourceIcons
+                attribute='stress'
+                label='Stress'
+                value={character?.stress ?? 0}
+                maxValue={character?.maxStress ?? 0}
+                maxLimit={12}
+                icon='star'
+                readOnly
+              />
+              <ResourceIcons
+                attribute='armorSlots'
+                label='Armor Slots'
+                value={character?.armorSlots ?? 0}
+                maxValue={character?.maxArmorSlots ?? 0}
+                maxLimit={12}
+                icon='shield'
+                readOnly
               />
             </li>
           );

@@ -1,4 +1,5 @@
 import Button from './Button';
+import ResourceIconsManager from './ResourceIconsManager';
 import ResourceIcons from './ResourceIcons';
 import type {Character, Game} from '../utils/types';
 
@@ -35,7 +36,7 @@ export default function Character({character, game}: Props) {
             defaultValue={character?.playerName ?? ''}
           />
         </label>
-        <ResourceIcons
+        <ResourceIconsManager
           attribute='hope'
           label='Hope'
           value={character?.hope ?? 0}
@@ -43,7 +44,7 @@ export default function Character({character, game}: Props) {
           maxLimit={6}
           icon='heart'
         />
-        <ResourceIcons
+        <ResourceIconsManager
           attribute='hitPoints'
           label='Hit Points'
           value={character?.hitPoints ?? 0}
@@ -52,7 +53,7 @@ export default function Character({character, game}: Props) {
           showMaxDropdown
           icon='cross'
         />
-        <ResourceIcons
+        <ResourceIconsManager
           attribute='stress'
           label='Stress'
           value={character?.stress ?? 0}
@@ -61,7 +62,7 @@ export default function Character({character, game}: Props) {
           showMaxDropdown
           icon='star'
         />
-        <ResourceIcons
+        <ResourceIconsManager
           attribute='armorSlots'
           label='Armor Slots'
           value={character?.armorSlots ?? 0}
@@ -78,17 +79,24 @@ export default function Character({character, game}: Props) {
         <Button type='submit' label='Save' role='primary' className='ml-8' />
       </form>
       <hr />
-      <h3 className='text-dh-gold mb-0 pb-0 text-xl font-semibold tracking-tight'>
-        Game for this Character:
-      </h3>
-      {!game && <p>There is no Game for this Character.</p>}
       {game && (
-        <Button
-          label={game.name}
-          role='primary'
-          link={`/games/${game.id}`}
-          className='mbe-1 inline-block text-lg'
-        />
+        <>
+          <h3 className='text-dh-gold mb-0 pb-0 text-xl font-semibold tracking-tight'>
+            This character is playing in:
+            <br />
+            <span className='font-bold'>{game.name}</span> (
+            {game.gameMasterName})
+          </h3>
+          <ResourceIcons
+            attribute='fear'
+            label='Fear'
+            value={game?.fear ?? 0}
+            maxValue={12}
+            maxLimit={12}
+            icon='skull'
+            readOnly
+          />
+        </>
       )}
     </>
   );
