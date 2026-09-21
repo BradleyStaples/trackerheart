@@ -12,17 +12,15 @@ export const getServerSideProps = (async ({req, params}) => {
   }
   const game = id ? ((await getGameById(id, deviceId)) ?? null) : null;
   const characters = game ? await getCharactersInGame(game.id) : [];
-  return {props: {game, characters, deviceId}};
+  return {props: {game, characters}};
 }) satisfies GetServerSideProps<{
   game: GameType | null;
   characters: Character[];
-  deviceId: string | null;
 }>;
 
 export default function GamePage({
   game,
   characters,
-  deviceId,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <div className='flex flex-1 flex-col items-center justify-center'>

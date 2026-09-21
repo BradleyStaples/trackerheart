@@ -1,6 +1,6 @@
 import type {InferGetServerSidePropsType, GetServerSideProps} from 'next';
 import Character from '../../components/Character';
-import type {Character as CharacterType} from '../../utils/types';
+import type {Character as CharacterType, Game} from '../../utils/types';
 import {getCharacterById, getGameForCharacter} from '../../utils/firestore';
 import {DEVICE_ID_COOKIE} from '../../hooks/useUUID';
 
@@ -14,17 +14,17 @@ export const getServerSideProps = (async ({req, params}) => {
     ? ((await getCharacterById(id, deviceId)) ?? null)
     : null;
   const game = character ? await getGameForCharacter(character.id) : undefined;
-  return {props: {character, game, deviceId}};
+  return {props: {character, game}};
 }) satisfies GetServerSideProps<{
   character: CharacterType | null;
-  deviceId: string | null;
+  game: Game | undefined;
 }>;
 
 export default function GamePage({
   character,
   game,
-  deviceId,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  console.log('character', character);
   return (
     <div className='flex flex-1 flex-col items-center justify-center'>
       <main className='flex w-full max-w-3xl flex-1 flex-col items-center justify-between px-16 py-8 sm:items-start'>
