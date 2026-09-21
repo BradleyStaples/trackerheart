@@ -1,13 +1,14 @@
 import Button from './Button';
 import ResourceIcons from './ResourceIcons';
 import {createShareCode} from '../utils/utils';
-import type {Game} from '../utils/types';
+import type {Game, Character} from '../utils/types';
 
 interface Props {
   game: Game | undefined;
+  characters: Character[];
 }
 
-export default function Game({game}: Props) {
+export default function Game({game, characters}: Props) {
   const initialShareCode = createShareCode();
 
   const fieldClasses =
@@ -65,6 +66,27 @@ export default function Game({game}: Props) {
         />
         <Button className='ml-8' type='submit' label='Save' role='primary' />
       </form>
+      <hr />
+      <h3 className='text-dh-gold mb-0 pb-0 text-xl font-semibold tracking-tight'>
+        Characters in this Game:
+      </h3>
+      <ul className='m-0 p-0'>
+        {characters.length === 0 && (
+          <li>There are no Characters in this Game.</li>
+        )}
+        {characters.map((character) => {
+          return (
+            <li key={character.id} className='py-2'>
+              <Button
+                label={character.name}
+                role='primary'
+                link={`/characters/${character.id}`}
+                className='mbe-1 inline-block text-lg'
+              />
+            </li>
+          );
+        })}
+      </ul>
     </>
   );
 }

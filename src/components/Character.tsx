@@ -1,13 +1,13 @@
 import Button from './Button';
 import ResourceIcons from './ResourceIcons';
-import useDataStore from '../hooks/useDataStore';
-import type {Character} from '../utils/types';
+import type {Character, Game} from '../utils/types';
 
 interface Props {
   character: Character | undefined;
+  game: Game | undefined;
 }
 
-export default function Character({character}: Props) {
+export default function Character({character, game}: Props) {
   const fieldClasses =
     'mbe-4 w-full border-2 border-gray-700 rounded-sm bg-white px-2 py-1 focus:ring-3 focus:outline-none ring-yellow-300 text-dh-blue';
 
@@ -77,6 +77,19 @@ export default function Character({character}: Props) {
         />
         <Button type='submit' label='Save' role='primary' className='ml-8' />
       </form>
+      <hr />
+      <h3 className='text-dh-gold mb-0 pb-0 text-xl font-semibold tracking-tight'>
+        Game for this Character:
+      </h3>
+      {!game && <p>There is no Game for this Character.</p>}
+      {game && (
+        <Button
+          label={game.name}
+          role='primary'
+          link={`/games/${game.id}`}
+          className='mbe-1 inline-block text-lg'
+        />
+      )}
     </>
   );
 }

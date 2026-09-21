@@ -1,18 +1,20 @@
-import {useState} from 'react';
-import useFirebase from './useFirebase';
 import type {Character, Game} from '../utils/types';
-// import {data as dummyData} from '../utils/dummyData';
+import useUUID from './useUUID';
+import {
+  getGamesForDevice,
+  getGameById,
+  getCharactersForDevice,
+  getCharacterById,
+} from '../utils/firestore';
 
 export default function useDataStore() {
-  const {
-    getGamesForDevice,
-    getGameById,
-    getCharactersForDevice,
-    getCharacterById,
-  } = useFirebase();
+  const deviceId = useUUID();
 
   const getCharacters = () => {
-    const characters = getCharactersForDevice()
+    if (!deviceId) {
+      return Promise.resolve([] as Character[]);
+    }
+    const characters = getCharactersForDevice(deviceId)
       .then((characters: Character[]) => {
         return characters;
       })
@@ -24,7 +26,10 @@ export default function useDataStore() {
   };
 
   const getCharacter = (characterId: string) => {
-    const character = getCharacterById(characterId)
+    if (!deviceId) {
+      return Promise.resolve(undefined);
+    }
+    const character = getCharacterById(characterId, deviceId)
       .then((character: Character | undefined) => {
         return character ?? undefined;
       })
@@ -36,7 +41,10 @@ export default function useDataStore() {
   };
 
   const getGames = () => {
-    const games = getGamesForDevice()
+    if (!deviceId) {
+      return Promise.resolve([] as Game[]);
+    }
+    const games = getGamesForDevice(deviceId)
       .then((games: Game[]) => {
         return games;
       })
@@ -48,7 +56,10 @@ export default function useDataStore() {
   };
 
   const getGame = (gameId: string) => {
-    const game = getGameById(gameId)
+    if (!deviceId) {
+      return Promise.resolve(undefined);
+    }
+    const game = getGameById(gameId, deviceId)
       .then((game: Game | undefined) => {
         return game ?? undefined;
       })

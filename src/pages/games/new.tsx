@@ -10,7 +10,7 @@ export default function NewGamePage() {
               Trackerheart
             </h1>
           </div>
-          <Game game={undefined} />
+          <Game game={undefined} characters={[]} />
         </div>
       </main>
     </div>

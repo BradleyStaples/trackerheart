@@ -1,7 +1,7 @@
 import type {InferGetServerSidePropsType, GetServerSideProps} from 'next';
 import Game from '../../components/Game';
-import type {Game as GameType} from '../../utils/types';
-import {getGameById} from '../../utils/firestore';
+import type {Game as GameType, Character} from '../../utils/types';
+import {getGameById, getCharactersInGame} from '../../utils/firestore';
 import {DEVICE_ID_COOKIE} from '../../hooks/useUUID';
 
 export const getServerSideProps = (async ({req, params}) => {
@@ -10,15 +10,19 @@ export const getServerSideProps = (async ({req, params}) => {
   if (Array.isArray(id)) {
     id = id[0];
   }
-  const game = id ? ((await getGameById(id)) ?? null) : null;
-  return {props: {game, deviceId}};
+  const game = id ? ((await getGameById(id, deviceId)) ?? null) : null;
+  const characters = game ? await getCharactersInGame(game.id) : [];
+  return {props: {game, characters, deviceId}};
 }) satisfies GetServerSideProps<{
   game: GameType | null;
+  characters: Character[];
   deviceId: string | null;
 }>;
 
 export default function GamePage({
   game,
+  characters,
+  deviceId,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <div className='flex flex-1 flex-col items-center justify-center'>
@@ -29,7 +33,7 @@ export default function GamePage({
               Trackerheart
             </h1>
           </div>
-          <Game game={game ?? undefined} />
+          <Game game={game ?? undefined} characters={characters} />
         </div>
       </main>
     </div>
