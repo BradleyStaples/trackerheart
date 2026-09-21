@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "classnames": "^2.5.1",
+    "firebase": "^12.19.0",
     "next": "16.3.5",
     "react": "19.3.0",
     "react-dom": "19.3.0",
@@ -29,6 +30,8 @@
     "typescript": "^7"
   },
   "allowScripts": {
-    "unrs-resolver@1.12.2": true
+    "unrs-resolver@1.12.2": true,
+    "@firebase/util@1.15.3": true,
+    "protobufjs@7.6.6": true
   }
 }

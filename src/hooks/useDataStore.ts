@@ -1,28 +1,62 @@
 import {useState} from 'react';
-// import type {Character, Game} from '../utils/types';
-import {data as dummyData} from '../utils/dummyData';
+import useFirebase from './useFirebase';
+import type {Character, Game} from '../utils/types';
+// import {data as dummyData} from '../utils/dummyData';
 
 export default function useDataStore() {
-  const [data, _setData] = useState(dummyData);
+  const {
+    getGamesForDevice,
+    getGameById,
+    getCharactersForDevice,
+    getCharacterById,
+  } = useFirebase();
 
   const getCharacters = () => {
-    return data.characters;
+    const characters = getCharactersForDevice()
+      .then((characters: Character[]) => {
+        return characters;
+      })
+      .catch((error) => {
+        console.error(error);
+        return [];
+      });
+    return characters;
   };
 
   const getCharacter = (characterId: string) => {
-    return data.characters.find(({id}) => {
-      return id === characterId;
-    });
+    const character = getCharacterById(characterId)
+      .then((character: Character | undefined) => {
+        return character ?? undefined;
+      })
+      .catch((error) => {
+        console.error(error);
+        return undefined;
+      });
+    return character;
   };
 
   const getGames = () => {
-    return data.games;
+    const games = getGamesForDevice()
+      .then((games: Game[]) => {
+        return games;
+      })
+      .catch((error) => {
+        console.error(error);
+        return [];
+      });
+    return games;
   };
 
   const getGame = (gameId: string) => {
-    return data.games.find(({id}) => {
-      return id === gameId;
-    });
+    const game = getGameById(gameId)
+      .then((game: Game | undefined) => {
+        return game ?? undefined;
+      })
+      .catch((error) => {
+        console.error(error);
+        return undefined;
+      });
+    return game;
   };
 
   return {getCharacters, getCharacter, getGames, getGame};

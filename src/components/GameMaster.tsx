@@ -1,9 +1,24 @@
+import {useEffect, useState} from 'react';
 import Button from './Button';
 import useDataStore from '../hooks/useDataStore';
+import type {Game} from '../utils/types';
 
 export default function GameMaster() {
   const {getGames} = useDataStore();
-  const games = getGames();
+  const [games, setGames] = useState<Game[]>([]);
+
+  // Runs once on mount: useDataStore returns new function instances every
+  // render, so listing getGames as a dependency would refetch in a loop.
+  useEffect(() => {
+    let cancelled = false;
+    getGames().then((fetchedGames) => {
+      if (!cancelled) setGames(fetchedGames);
+    });
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
@@ -11,6 +26,7 @@ export default function GameMaster() {
         Your Games:
       </h3>
       <ul>
+        {games === undefined && <li>Loading...</li>}
         {games.length === 0 && <li>You do not have any Games.</li>}
         {games.map((game) => {
           return (

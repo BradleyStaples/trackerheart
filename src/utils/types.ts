@@ -1,7 +1,7 @@
 export type PlayerType = 'Player' | 'GameMaster';
 
 export interface Character {
-  id?: string;
+  id: string;
   name: string;
   playerName: string;
   hope: number;
@@ -11,13 +11,16 @@ export interface Character {
   maxHitPoints: number;
   armorSlots: number;
   maxArmorSlots: number;
+  deviceId: string;
+  createdAt?: Date;
 }
 
 export interface Game {
-  id?: string;
+  id: string;
   name: string;
   gameMasterName: string;
   fear: number;
   shareCode: string;
-  characterIds: string[];
+  deviceId: string;
+  createdAt?: Date;
 }

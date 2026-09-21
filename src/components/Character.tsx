@@ -1,22 +1,20 @@
 import Button from './Button';
 import ResourceIcons from './ResourceIcons';
 import useDataStore from '../hooks/useDataStore';
+import type {Character} from '../utils/types';
 
 interface Props {
-  id?: string;
+  character: Character | undefined;
 }
 
-export default function Character({id}: Props) {
-  const {getCharacter} = useDataStore();
-  const character = id ? getCharacter(id) : undefined;
-
+export default function Character({character}: Props) {
   const fieldClasses =
     'mbe-4 w-full border-2 border-gray-700 rounded-sm bg-white px-2 py-1 focus:ring-3 focus:outline-none ring-yellow-300 text-dh-blue';
 
   return (
     <>
       <form className='mx-auto block w-[340]'>
-        <input type='hidden' name='id' value={id ?? ''} />
+        <input type='hidden' name='id' value={character?.id ?? ''} />
         <label>
           <span className='font-bold'>Character name:</span>
           <input

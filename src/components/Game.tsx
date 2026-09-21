@@ -1,15 +1,13 @@
 import Button from './Button';
 import ResourceIcons from './ResourceIcons';
-import useDataStore from '../hooks/useDataStore';
 import {createShareCode} from '../utils/utils';
+import type {Game} from '../utils/types';
 
 interface Props {
-  id?: string;
+  game: Game | undefined;
 }
 
-export default function Game({id}: Props) {
-  const {getGame} = useDataStore();
-  const game = id ? getGame(id) : undefined;
+export default function Game({game}: Props) {
   const initialShareCode = createShareCode();
 
   const fieldClasses =
@@ -18,8 +16,8 @@ export default function Game({id}: Props) {
   return (
     <>
       <form className='mx-auto block w-[340]'>
-        <input type='hidden' name='id' value={id ?? ''} />
-        {!id && (
+        <input type='hidden' name='id' value={game?.id ?? ''} />
+        {!game?.id && (
           <input type='hidden' name='shareCode' value={initialShareCode} />
         )}
         <label>
@@ -40,7 +38,7 @@ export default function Game({id}: Props) {
             defaultValue={game?.gameMasterName ?? ''}
           />
         </label>
-        {id && (
+        {game?.id && (
           <label>
             <span className='font-bold'>Share Code:</span>
             <input
@@ -52,16 +50,6 @@ export default function Game({id}: Props) {
             />
           </label>
         )}
-        <label>
-          <span className='font-bold'>Character Ids:</span>
-          <input
-            type='text'
-            readOnly
-            name='characterIds'
-            className={fieldClasses}
-            value={game?.characterIds.join(', ') ?? ''}
-          />
-        </label>
         <ResourceIcons
           attribute='fear'
           label='Fear'

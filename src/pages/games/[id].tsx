@@ -1,13 +1,25 @@
-import {useRouter} from 'next/router';
+import type {InferGetServerSidePropsType, GetServerSideProps} from 'next';
 import Game from '../../components/Game';
+import type {Game as GameType} from '../../utils/types';
+import {getGameById} from '../../utils/firestore';
+import {DEVICE_ID_COOKIE} from '../../hooks/useUUID';
 
-export default function GamePage() {
-  const router = useRouter();
-  let id = router.query.id;
+export const getServerSideProps = (async ({req, params}) => {
+  const deviceId = req.cookies[DEVICE_ID_COOKIE] ?? null;
+  let id = params?.id;
   if (Array.isArray(id)) {
     id = id[0];
   }
+  const game = id ? ((await getGameById(id)) ?? null) : null;
+  return {props: {game, deviceId}};
+}) satisfies GetServerSideProps<{
+  game: GameType | null;
+  deviceId: string | null;
+}>;
 
+export default function GamePage({
+  game,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <div className='flex flex-1 flex-col items-center justify-center'>
       <main className='flex w-full max-w-3xl flex-1 flex-col items-center justify-between px-16 py-8 sm:items-start'>
@@ -17,7 +29,7 @@ export default function GamePage() {
               Trackerheart
             </h1>
           </div>
-          <Game id={id} />
+          <Game game={game ?? undefined} />
         </div>
       </main>
     </div>
