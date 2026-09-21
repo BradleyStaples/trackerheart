@@ -24,14 +24,22 @@ export default function ResourceIconsManager({
 }: Props) {
   const [value, setValue] = useState(initialValue);
   const [maxValue, setMaxValue] = useState(initialMaxValue);
-  const [hasUpdated, setHasUpdated] = useState(false);
+  const [previousProps, setPreviousProps] = useState({
+    value: initialValue,
+    maxValue: initialMaxValue,
+  });
   const array = new Array<string>(maxLimit).fill('');
 
-  // handle lack of data coming from dynamic defaulting values to 0 initially
-  if (!hasUpdated && (value !== initialValue || maxValue !== initialMaxValue)) {
+  // Reset to the new values when the props change (for example when data
+  // arrives after the first render). Compare against the previous props, not
+  // the current state, or the user's own edits would be treated as a change.
+  if (
+    previousProps.value !== initialValue ||
+    previousProps.maxValue !== initialMaxValue
+  ) {
+    setPreviousProps({value: initialValue, maxValue: initialMaxValue});
     setValue(initialValue);
     setMaxValue(initialMaxValue);
-    setHasUpdated(true);
   }
 
   const handleRadio = (event: ChangeEvent<HTMLInputElement>) => {
