@@ -35,6 +35,7 @@ export default function GamePage({
             </h1>
           </div>
           <Character
+            key={character?.id}
             character={character ?? undefined}
             game={game ?? undefined}
           />

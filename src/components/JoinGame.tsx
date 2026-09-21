@@ -1,5 +1,4 @@
 import {useState, type SyntheticEvent} from 'react';
-import {useRouter} from 'next/router';
 import Button from './Button';
 import useDataStore from '../hooks/useDataStore';
 
@@ -8,7 +7,6 @@ interface Props {
 }
 
 export default function JoinGame({characterId}: Props) {
-  const router = useRouter();
   const {joinGame} = useDataStore();
   const [status, setStatus] = useState<
     'idle' | 'joining' | 'notFound' | 'error'
@@ -29,8 +27,8 @@ export default function JoinGame({characterId}: Props) {
         setStatus('notFound');
         return;
       }
-      // re-run getServerSideProps so the page shows the joined Game
-      await router.replace(router.asPath);
+      // the page follows the Character's Game in real time, so it switches
+      // from this form to the Game without a refresh
     } catch (error) {
       console.error('Unable to join Game', {error});
       setStatus('error');

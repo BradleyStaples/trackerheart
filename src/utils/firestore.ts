@@ -10,6 +10,8 @@ import {
   setDoc,
   updateDoc,
   deleteDoc,
+  onSnapshot,
+  type Unsubscribe,
 } from 'firebase/firestore';
 import type {
   Game,
@@ -275,4 +277,119 @@ export async function removeCharacterFromGame(
     console.error('Error removing Character from Game:', error);
     throw error;
   }
+}
+
+// Real-time subscriptions. Each one calls its callback with the current data
+// right away and again on every change, and returns a function that stops
+// listening. Errors (for example rejected by security rules) go to onError.
+function subscribeToGame(
+  gameId: string,
+  onGame: (game: Game | undefined) => void,
+  onError?: (error: Error) => void,
+): Unsubscribe {
+  return onSnapshot(
+    doc(getDb(), 'Games', gameId),
+    (docSnap) =>
+      onGame(
+        docSnap.exists()
+          ? ({id: docSnap.id, ...docSnap.data()} as Game)
+          : undefined,
+      ),
+    onError,
+  );
+}
+
+// Follows the Character's Game as it changes, including when the Character
+// joins, leaves or switches Games. The callback receives null when the
+// Character isn't in a Game.
+export function subscribeToGameForCharacter(
+  characterId: string,
+  onGame: (game: Game | null) => void,
+  onError?: (error: Error) => void,
+): Unsubscribe {
+  let unsubscribeGame: Unsubscribe = () => {};
+  let currentGameId: string | undefined;
+
+  const unsubscribeMapping = onSnapshot(
+    query(
+      collection(getDb(), 'GameCharacters'),
+      where('characterId', '==', characterId),
+    ),
+    (mappingSnapshot) => {
+      const gameId: string | undefined = mappingSnapshot.docs[0]?.data().gameId;
+      if (gameId === currentGameId) return;
+      currentGameId = gameId;
+
+      unsubscribeGame();
+      unsubscribeGame = () => {};
+      if (!gameId) {
+        onGame(null);
+        return;
+      }
+      unsubscribeGame = subscribeToGame(
+        gameId,
+        (game) => onGame(game ?? null),
+        onError,
+      );
+    },
+    onError,
+  );
+
+  return () => {
+    unsubscribeMapping();
+    unsubscribeGame();
+  };
+}
+
+// Follows the Characters in the Game as they change, including when
+// Characters join or leave.
+export function subscribeToCharactersInGame(
+  gameId: string,
+  onCharacters: (characters: Character[]) => void,
+  onError?: (error: Error) => void,
+): Unsubscribe {
+  let unsubscribeCharacters: Unsubscribe = () => {};
+  let currentKey: string | undefined;
+
+  const unsubscribeMappings = onSnapshot(
+    query(collection(getDb(), 'GameCharacters'), where('gameId', '==', gameId)),
+    (mappingSnapshot) => {
+      const characterIds = [
+        ...new Set(
+          mappingSnapshot.docs.map(
+            (docSnap) => docSnap.data().characterId as string,
+          ),
+        ),
+      ].sort();
+      const key = characterIds.join(',');
+      if (key === currentKey) return;
+      currentKey = key;
+
+      unsubscribeCharacters();
+      unsubscribeCharacters = () => {};
+      if (characterIds.length === 0) {
+        onCharacters([]);
+        return;
+      }
+      unsubscribeCharacters = onSnapshot(
+        query(
+          collection(getDb(), 'Characters'),
+          where(documentId(), 'in', characterIds),
+        ),
+        (charactersSnapshot) =>
+          onCharacters(
+            charactersSnapshot.docs.map(
+              (docSnap) => ({id: docSnap.id, ...docSnap.data()}) as Character,
+            ),
+          ),
+        onError,
+      );
+    },
+    onError,
+  );
+
+  return () => {
+    unsubscribeMappings();
+    unsubscribeCharacters();
+  };
 }

@@ -31,7 +31,11 @@ export default function GamePage({
               Trackerheart
             </h1>
           </div>
-          <Game game={game ?? undefined} characters={characters} />
+          <Game
+            key={game?.id}
+            game={game ?? undefined}
+            characters={characters}
+          />
         </div>
       </main>
     </div>

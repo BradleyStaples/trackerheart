@@ -6,6 +6,7 @@ import LeaveGame from './LeaveGame';
 import ResourceIconsManager from './ResourceIconsManager';
 import ResourceIcons from './ResourceIcons';
 import useDataStore from '../hooks/useDataStore';
+import useGameForCharacter from '../hooks/useGameForCharacter';
 import type {Character, Game} from '../utils/types';
 
 interface Props {
@@ -13,7 +14,8 @@ interface Props {
   game: Game | undefined;
 }
 
-export default function Character({character, game}: Props) {
+export default function Character({character, game: initialGame}: Props) {
+  const game = useGameForCharacter(character?.id, initialGame);
   const router = useRouter();
   const {saveCharacter} = useDataStore();
   const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>(

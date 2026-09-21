@@ -1,5 +1,4 @@
 import {useState} from 'react';
-import {useRouter} from 'next/router';
 import Button from './Button';
 import useDataStore from '../hooks/useDataStore';
 
@@ -18,7 +17,6 @@ export default function LeaveGame({
   confirmMessage,
   className,
 }: Props) {
-  const router = useRouter();
   const {leaveGame} = useDataStore();
   const [status, setStatus] = useState<'idle' | 'leaving' | 'error'>('idle');
 
@@ -28,8 +26,7 @@ export default function LeaveGame({
     setStatus('leaving');
     try {
       await leaveGame(characterId, gameId);
-      // re-run getServerSideProps so the page no longer shows the Game
-      await router.replace(router.asPath);
+      // the page follows the Game in real time, so it updates without a refresh
       setStatus('idle');
     } catch (error) {
       console.error('Unable to leave Game', {error});
