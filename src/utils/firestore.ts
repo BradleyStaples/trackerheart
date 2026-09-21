@@ -6,8 +6,11 @@ import {
   where,
   getDocs,
   documentId,
+  doc,
+  setDoc,
+  updateDoc,
 } from 'firebase/firestore';
-import type {Game, Character} from './types';
+import type {Game, Character, GameInput, NewGameInput} from './types';
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -77,6 +80,31 @@ export async function getGameById(
     return games[0];
   } catch (error) {
     console.error('Error fetching Game by id:', error);
+    throw error;
+  }
+}
+
+// The Game's id is the Firestore document ID, so it isn't stored in the data.
+export async function createGame(input: NewGameInput): Promise<Game> {
+  try {
+    const gameRef = doc(collection(getDb(), 'Games'));
+    await setDoc(gameRef, input);
+    return {...input, id: gameRef.id};
+  } catch (error) {
+    console.error('Error creating Game:', error);
+    throw error;
+  }
+}
+
+// deviceId and shareCode are deliberately not editable after creation.
+export async function updateGame(
+  gameId: string,
+  input: GameInput,
+): Promise<void> {
+  try {
+    await updateDoc(doc(getDb(), 'Games', gameId), input);
+  } catch (error) {
+    console.error('Error updating Game:', error);
     throw error;
   }
 }

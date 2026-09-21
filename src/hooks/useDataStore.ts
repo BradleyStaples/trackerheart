@@ -1,11 +1,14 @@
-import type {Character, Game} from '../utils/types';
+import type {Character, Game, GameInput} from '../utils/types';
 import useUUID from './useUUID';
 import {
   getGamesForDevice,
   getGameById,
   getCharactersForDevice,
   getCharacterById,
+  createGame,
+  updateGame,
 } from '../utils/firestore';
+import {createShareCode} from '../utils/utils';
 
 export default function useDataStore() {
   const deviceId = useUUID();
@@ -70,5 +73,24 @@ export default function useDataStore() {
     return game;
   };
 
-  return {getCharacters, getCharacter, getGames, getGame};
+  // Updates the Game when an id is given, otherwise creates it for this
+  // device. Resolves to the Game's id. Errors are left to the caller so the
+  // UI can report them.
+  const saveGame = async ({id, ...input}: GameInput & {id?: string}) => {
+    if (id) {
+      await updateGame(id, input);
+      return id;
+    }
+    if (!deviceId) {
+      throw new Error('Cannot create a Game without a device ID.');
+    }
+    const game = await createGame({
+      ...input,
+      shareCode: createShareCode(),
+      deviceId,
+    });
+    return game.id;
+  };
+
+  return {getCharacters, getCharacter, getGames, getGame, saveGame};
 }
