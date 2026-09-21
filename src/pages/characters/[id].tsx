@@ -13,11 +13,11 @@ export const getServerSideProps = (async ({req, params}) => {
   const character = id
     ? ((await getCharacterById(id, deviceId)) ?? null)
     : null;
-  const game = character ? await getGameForCharacter(character.id) : undefined;
+  const game = character ? await getGameForCharacter(character.id) : null;
   return {props: {character, game}};
 }) satisfies GetServerSideProps<{
   character: CharacterType | null;
-  game: Game | undefined;
+  game: Game | null;
 }>;
 
 export default function GamePage({
@@ -34,7 +34,10 @@ export default function GamePage({
               Trackerheart
             </h1>
           </div>
-          <Character character={character ?? undefined} game={game} />
+          <Character
+            character={character ?? undefined}
+            game={game ?? undefined}
+          />
         </div>
       </main>
     </div>

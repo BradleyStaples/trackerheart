@@ -10,7 +10,14 @@ import {
   setDoc,
   updateDoc,
 } from 'firebase/firestore';
-import type {Game, Character, GameInput, NewGameInput} from './types';
+import type {
+  Game,
+  Character,
+  GameInput,
+  NewGameInput,
+  CharacterInput,
+  NewCharacterInput,
+} from './types';
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -167,7 +174,7 @@ export async function getGameForCharacter(characterId: string) {
   );
   const mappingSnapshot = await getDocs(q);
   const gameIds = mappingSnapshot.docs.map((docSnap) => docSnap.data().gameId);
-  if (gameIds.length === 0) return undefined;
+  if (gameIds.length === 0) return null;
 
   const gamesQuery = query(
     collection(getDb(), 'Games'),
@@ -178,5 +185,32 @@ export async function getGameForCharacter(characterId: string) {
   const games = gamesSnapshot.docs.map(
     (doc) => ({id: doc.id, ...doc.data()}) as Game,
   );
-  return games[0];
+  return games[0] ?? null;
+}
+
+// The Character's id is the Firestore document ID, so it isn't stored in the data.
+export async function createCharacter(
+  input: NewCharacterInput,
+): Promise<Character> {
+  try {
+    const characterRef = doc(collection(getDb(), 'Characters'));
+    await setDoc(characterRef, input);
+    return {...input, id: characterRef.id};
+  } catch (error) {
+    console.error('Error creating Character:', error);
+    throw error;
+  }
+}
+
+// deviceId is deliberately not editable after creation.
+export async function updateCharacter(
+  characterId: string,
+  input: CharacterInput,
+): Promise<void> {
+  try {
+    await updateDoc(doc(getDb(), 'Characters', characterId), input);
+  } catch (error) {
+    console.error('Error updating Character:', error);
+    throw error;
+  }
 }

@@ -1,6 +1,9 @@
+import {useState, type SyntheticEvent} from 'react';
+import {useRouter} from 'next/router';
 import Button from './Button';
 import ResourceIconsManager from './ResourceIconsManager';
 import ResourceIcons from './ResourceIcons';
+import useDataStore from '../hooks/useDataStore';
 import type {Character, Game} from '../utils/types';
 
 interface Props {
@@ -9,18 +12,58 @@ interface Props {
 }
 
 export default function Character({character, game}: Props) {
+  const router = useRouter();
+  const {saveCharacter} = useDataStore();
+  const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>(
+    'idle',
+  );
+
+  const handleSubmit = async (event: SyntheticEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    // no radio is checked when a resource's value is 0
+    const getNumber = (field: string) =>
+      parseInt(String(formData.get(field) ?? '0'), 10) || 0;
+
+    setStatus('saving');
+    try {
+      const id = await saveCharacter({
+        id: character?.id,
+        name: String(formData.get('name') ?? '').trim(),
+        playerName: String(formData.get('playerName') ?? '').trim(),
+        hope: getNumber('hope'),
+        hitPoints: getNumber('hitPoints'),
+        maxHitPoints: getNumber('hitPointsMaxValue'),
+        stress: getNumber('stress'),
+        maxStress: getNumber('stressMaxValue'),
+        armorSlots: getNumber('armorSlots'),
+        maxArmorSlots: getNumber('armorSlotsMaxValue'),
+      });
+      if (character?.id) {
+        // re-run getServerSideProps so the page shows the saved data
+        await router.replace(router.asPath);
+        setStatus('saved');
+      } else {
+        await router.push(`/characters/${id}`);
+      }
+    } catch (error) {
+      console.error('Unable to save Character', {error});
+      setStatus('error');
+    }
+  };
+
   const fieldClasses =
     'mbe-4 w-full border-2 border-gray-700 rounded-sm bg-white px-2 py-1 focus:ring-3 focus:outline-none ring-yellow-300 text-dh-blue';
 
   return (
     <>
-      <form className='mx-auto block w-[340]'>
-        <input type='hidden' name='id' value={character?.id ?? ''} />
+      <form className='mx-auto block w-[340]' onSubmit={handleSubmit}>
         <label>
           <span className='font-bold'>Character name:</span>
           <input
             type='text'
             name='name'
+            required
             autoComplete='off'
             className={fieldClasses}
             defaultValue={character?.name ?? ''}
@@ -76,7 +119,16 @@ export default function Character({character, game}: Props) {
           role='secondary'
           link='/?tab=Player'
         />
-        <Button type='submit' label='Save' role='primary' className='ml-8' />
+        <Button
+          type='submit'
+          label={status === 'saving' ? 'Saving...' : 'Save'}
+          role='primary'
+          className='ml-8'
+        />
+        {status === 'saved' && <p role='status'>Saved.</p>}
+        {status === 'error' && (
+          <p role='alert'>Unable to save this Character. Please try again.</p>
+        )}
       </form>
       <hr />
       {game && (
