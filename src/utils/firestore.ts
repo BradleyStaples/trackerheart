@@ -214,3 +214,41 @@ export async function updateCharacter(
     throw error;
   }
 }
+
+// Share codes are shown to players with spaces between the characters, so
+// ignore whitespace and case when matching.
+export async function getGameByShareCode(
+  shareCode: string,
+): Promise<Game | undefined> {
+  try {
+    const normalizedShareCode = shareCode.replace(/\s+/g, '').toUpperCase();
+    if (!normalizedShareCode) return undefined;
+    const games = await queryByField<Game>(
+      'Games',
+      'shareCode',
+      normalizedShareCode,
+    );
+    return games[0];
+  } catch (error) {
+    console.error('Error fetching Game by share code:', error);
+    throw error;
+  }
+}
+
+// The mapping's document ID is the characterId, since a Character plays in
+// one Game at a time (see getGameForCharacter). Joining another Game
+// replaces the previous mapping, and joining twice is harmless.
+export async function addCharacterToGame(
+  characterId: string,
+  gameId: string,
+): Promise<void> {
+  try {
+    await setDoc(doc(getDb(), 'GameCharacters', characterId), {
+      characterId,
+      gameId,
+    });
+  } catch (error) {
+    console.error('Error adding Character to Game:', error);
+    throw error;
+  }
+}

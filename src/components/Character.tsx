@@ -1,6 +1,7 @@
 import {useState, type SyntheticEvent} from 'react';
 import {useRouter} from 'next/router';
 import Button from './Button';
+import JoinGame from './JoinGame';
 import ResourceIconsManager from './ResourceIconsManager';
 import ResourceIcons from './ResourceIcons';
 import useDataStore from '../hooks/useDataStore';
@@ -131,6 +132,7 @@ export default function Character({character, game}: Props) {
         )}
       </form>
       <hr />
+      {!game && character?.id && <JoinGame characterId={character.id} />}
       {game && (
         <>
           <h3 className='text-dh-gold mb-0 pb-0 text-xl font-semibold tracking-tight'>

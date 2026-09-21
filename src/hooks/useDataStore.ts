@@ -9,6 +9,8 @@ import {
   updateGame,
   createCharacter,
   updateCharacter,
+  getGameByShareCode,
+  addCharacterToGame,
 } from '../utils/firestore';
 import {createShareCode} from '../utils/utils';
 
@@ -110,6 +112,16 @@ export default function useDataStore() {
     return character.id;
   };
 
+  // Links the Character to the Game with the given share code. Resolves to
+  // the Game, or undefined when no Game has that share code. Errors are left
+  // to the caller so the UI can report them.
+  const joinGame = async (characterId: string, shareCode: string) => {
+    const game = await getGameByShareCode(shareCode);
+    if (!game) return undefined;
+    await addCharacterToGame(characterId, game.id);
+    return game;
+  };
+
   return {
     getCharacters,
     getCharacter,
@@ -117,5 +129,6 @@ export default function useDataStore() {
     getGame,
     saveGame,
     saveCharacter,
+    joinGame,
   };
 }
