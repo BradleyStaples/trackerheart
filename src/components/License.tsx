@@ -14,7 +14,10 @@ export default function License() {
         <span>
           This product includes material from the Daggerheart System Reference
           Document 1.0, &copy; Critical Role, LLC, under the terms of the
-          Darrington Press Community Gaming License.
+          <a href='https://darringtonpress.com/license'>
+            Darrington Press Community Gaming License
+          </a>
+          .
         </span>
       </p>
       <hr />
