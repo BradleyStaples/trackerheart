@@ -12,7 +12,8 @@ export interface Character {
   armorSlots: number;
   maxArmorSlots: number;
   deviceId: string;
-  createdAt?: Date;
+  createdAt?: string; // ISO 8601, set by Firestore's serverTimestamp()
+  lastModifiedAt?: string; // ISO 8601, set by Firestore's serverTimestamp()
 }
 
 export interface Game {
@@ -22,7 +23,8 @@ export interface Game {
   fear: number;
   shareCode: string;
   deviceId: string;
-  createdAt?: Date;
+  createdAt?: string; // ISO 8601, set by Firestore's serverTimestamp()
+  lastModifiedAt?: string; // ISO 8601, set by Firestore's serverTimestamp()
 }
 
 // fields a user edits on an existing Game

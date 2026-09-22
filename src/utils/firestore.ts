@@ -11,6 +11,9 @@ import {
   updateDoc,
   deleteDoc,
   onSnapshot,
+  serverTimestamp,
+  Timestamp,
+  type DocumentData,
   type Unsubscribe,
 } from 'firebase/firestore';
 import type {
@@ -39,6 +42,20 @@ export function getDb() {
   return getFirestore(app);
 }
 
+// Firestore Timestamp instances aren't JSON serializable, which
+// getServerSideProps requires, and aren't plain data our types can describe.
+// Every place a document's data is read converts them to ISO strings first.
+function mapDocumentData<T>(id: string, data: DocumentData): T {
+  const result: Record<string, unknown> = {id, ...data};
+  for (const key of Object.keys(result)) {
+    const value = result[key];
+    if (value instanceof Timestamp) {
+      result[key] = value.toDate().toISOString();
+    }
+  }
+  return result as T;
+}
+
 async function queryByFieldAndDeviceId<T>(
   collectionName: string,
   field: string,
@@ -51,7 +68,9 @@ async function queryByFieldAndDeviceId<T>(
     where('deviceId', '==', deviceId),
   );
   const querySnapshot = await getDocs(q);
-  return querySnapshot.docs.map((doc) => ({id: doc.id, ...doc.data()}) as T);
+  return querySnapshot.docs.map((doc) =>
+    mapDocumentData<T>(doc.id, doc.data()),
+  );
 }
 
 async function queryByField<T>(
@@ -64,7 +83,9 @@ async function queryByField<T>(
     where(field, '==', value),
   );
   const querySnapshot = await getDocs(q);
-  return querySnapshot.docs.map((doc) => ({id: doc.id, ...doc.data()}) as T);
+  return querySnapshot.docs.map((doc) =>
+    mapDocumentData<T>(doc.id, doc.data()),
+  );
 }
 
 export async function getGamesForDevice(deviceId: string): Promise<Game[]> {
@@ -95,10 +116,17 @@ export async function getGameById(
 }
 
 // The Game's id is the Firestore document ID, so it isn't stored in the data.
+// createdAt and lastModifiedAt are set from the server clock so devices with
+// wrong or skewed clocks can't corrupt them; the returned Game leaves them
+// unset until a listener reads back the value Firestore actually stored.
 export async function createGame(input: NewGameInput): Promise<Game> {
   try {
     const gameRef = doc(collection(getDb(), 'Games'));
-    await setDoc(gameRef, input);
+    await setDoc(gameRef, {
+      ...input,
+      createdAt: serverTimestamp(),
+      lastModifiedAt: serverTimestamp(),
+    });
     return {...input, id: gameRef.id};
   } catch (error) {
     console.error('Error creating Game:', error);
@@ -112,7 +140,10 @@ export async function updateGame(
   input: GameInput,
 ): Promise<void> {
   try {
-    await updateDoc(doc(getDb(), 'Games', gameId), input);
+    await updateDoc(doc(getDb(), 'Games', gameId), {
+      ...input,
+      lastModifiedAt: serverTimestamp(),
+    });
   } catch (error) {
     console.error('Error updating Game:', error);
     throw error;
@@ -165,8 +196,8 @@ export async function getCharactersInGame(gameId: string) {
   );
 
   const charactersSnapshot = await getDocs(charactersQuery);
-  return charactersSnapshot.docs.map(
-    (doc) => ({id: doc.id, ...doc.data()}) as Character,
+  return charactersSnapshot.docs.map((doc) =>
+    mapDocumentData<Character>(doc.id, doc.data()),
   );
 }
 
@@ -185,19 +216,27 @@ export async function getGameForCharacter(characterId: string) {
   );
 
   const gamesSnapshot = await getDocs(gamesQuery);
-  const games = gamesSnapshot.docs.map(
-    (doc) => ({id: doc.id, ...doc.data()}) as Game,
+  const games = gamesSnapshot.docs.map((doc) =>
+    mapDocumentData<Game>(doc.id, doc.data()),
   );
   return games[0] ?? null;
 }
 
-// The Character's id is the Firestore document ID, so it isn't stored in the data.
+// The Character's id is the Firestore document ID, so it isn't stored in the
+// data. createdAt and lastModifiedAt are set from the server clock so devices
+// with wrong or skewed clocks can't corrupt them; the returned Character
+// leaves them unset until a listener reads back the value Firestore actually
+// stored.
 export async function createCharacter(
   input: NewCharacterInput,
 ): Promise<Character> {
   try {
     const characterRef = doc(collection(getDb(), 'Characters'));
-    await setDoc(characterRef, input);
+    await setDoc(characterRef, {
+      ...input,
+      createdAt: serverTimestamp(),
+      lastModifiedAt: serverTimestamp(),
+    });
     return {...input, id: characterRef.id};
   } catch (error) {
     console.error('Error creating Character:', error);
@@ -211,7 +250,10 @@ export async function updateCharacter(
   input: CharacterInput,
 ): Promise<void> {
   try {
-    await updateDoc(doc(getDb(), 'Characters', characterId), input);
+    await updateDoc(doc(getDb(), 'Characters', characterId), {
+      ...input,
+      lastModifiedAt: serverTimestamp(),
+    });
   } catch (error) {
     console.error('Error updating Character:', error);
     throw error;
@@ -240,7 +282,8 @@ export async function getGameByShareCode(
 
 // The mapping's document ID is the characterId, since a Character plays in
 // one Game at a time (see getGameForCharacter). Joining another Game
-// replaces the previous mapping, and joining twice is harmless.
+// replaces the previous mapping, and joining twice is harmless; both count as
+// a fresh create, so createdAt and lastModifiedAt are reset each time.
 export async function addCharacterToGame(
   characterId: string,
   gameId: string,
@@ -249,6 +292,8 @@ export async function addCharacterToGame(
     await setDoc(doc(getDb(), 'GameCharacters', characterId), {
       characterId,
       gameId,
+      createdAt: serverTimestamp(),
+      lastModifiedAt: serverTimestamp(),
     });
   } catch (error) {
     console.error('Error adding Character to Game:', error);
@@ -292,7 +337,7 @@ function subscribeToGame(
     (docSnap) =>
       onGame(
         docSnap.exists()
-          ? ({id: docSnap.id, ...docSnap.data()} as Game)
+          ? mapDocumentData<Game>(docSnap.id, docSnap.data())
           : undefined,
       ),
     onError,
@@ -378,8 +423,8 @@ export function subscribeToCharactersInGame(
         ),
         (charactersSnapshot) =>
           onCharacters(
-            charactersSnapshot.docs.map(
-              (docSnap) => ({id: docSnap.id, ...docSnap.data()}) as Character,
+            charactersSnapshot.docs.map((docSnap) =>
+              mapDocumentData<Character>(docSnap.id, docSnap.data()),
             ),
           ),
         onError,
