@@ -53,7 +53,7 @@ export default function Game({game, characters: initialCharacters}: Props) {
 
   return (
     <>
-      <form className='mx-auto block w-[340]' onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit}>
         <label>
           <span className='font-bold'>Game name:</span>
           <input
@@ -110,16 +110,21 @@ export default function Game({game, characters: initialCharacters}: Props) {
         )}
       </form>
       <hr />
-      <h3 className='mb-0 pb-0 text-xl font-semibold tracking-tight'>
+      <h3 className='mb-0 w-full pb-0 text-center text-xl font-semibold tracking-tight'>
         Characters in this game:
       </h3>
-      <ul className='m-0 p-0'>
+      <ul className='mx-auto'>
         {characters.length === 0 && (
           <li>There are no Characters in this Game.</li>
         )}
-        {characters.map((character) => {
+        {characters.map((character, index) => {
+          const liClasses =
+            index === 0
+              ? 'mbe-4 w-full'
+              : 'mbe-4 w-full border-t border-t-3 border-dh-blue pt-4';
+
           return (
-            <li key={character.id} className='mbe-4'>
+            <li key={character.id} className={liClasses}>
               <h4 className='text-dh-gold mbe-4 text-lg'>
                 <span className='pe-2 font-bold'>{character.name}</span>(
                 {character.playerName})

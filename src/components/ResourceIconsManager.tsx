@@ -28,7 +28,8 @@ export default function ResourceIconsManager({
     value: initialValue,
     maxValue: initialMaxValue,
   });
-  const array = new Array<string>(maxLimit).fill('');
+  // +1 to maxLimit to allow for a "0" option in the dropdown
+  const array = new Array<string>(maxLimit + 1).fill('');
 
   // Reset to the new values when the props change (for example when data
   // arrives after the first render). Compare against the previous props, not
@@ -62,8 +63,29 @@ export default function ResourceIconsManager({
   return (
     <div className='mbe-4 flex'>
       <div className='grow'>
-        <div className='flex items-center'>
-          <div className='w-16'>
+        <div
+          className={`flex ${showMaxDropdown ? 'items-start' : 'items-center'}`}
+        >
+          <div className='flex w-20 flex-col items-start justify-start'>
+            {showMaxDropdown && (
+              <label className='mbe-2 flex h-full flex-col items-start justify-start'>
+                <div className='font-bold'>Max</div>
+                <select
+                  name={`${attribute}MaxValue`}
+                  className='rounded-base ring-dh-gold inline-block w-16 border bg-white px-3 py-1 text-center text-sm text-gray-700 shadow-xs focus:ring-3 focus:outline-none'
+                  value={maxValue}
+                  onChange={handleSelect}
+                >
+                  {array.map((_, index) => {
+                    return (
+                      <option key={`max-${attribute}-${index}`} value={index}>
+                        {index}
+                      </option>
+                    );
+                  })}
+                </select>
+              </label>
+            )}
             <Button role='tertiary' label='Clear' onClick={handleClear} />
           </div>
           <div className='grow'>
@@ -78,28 +100,6 @@ export default function ResourceIconsManager({
             />
           </div>
         </div>
-      </div>
-      <div className='w-18 grow-0'>
-        {showMaxDropdown && (
-          <label className='flex h-full flex-col items-end justify-start'>
-            <div className='text-right font-bold'>Max</div>
-            <select
-              name={`${attribute}MaxValue`}
-              className='rounded-base inline-block w-16 border bg-white px-3 py-1 text-center text-sm text-gray-700 shadow-xs ring-yellow-300 focus:ring-4 focus:outline-none'
-              value={maxValue}
-              onChange={handleSelect}
-            >
-              {array.map((_, index) => {
-                const value = index + 1;
-                return (
-                  <option key={`max-${attribute}-${value}`} value={value}>
-                    {value}
-                  </option>
-                );
-              })}
-            </select>
-          </label>
-        )}
       </div>
     </div>
   );

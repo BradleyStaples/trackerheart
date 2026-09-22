@@ -34,7 +34,7 @@ export default function ResourceIconsManager({
         const isDisabled = radioNumber > maxValue;
 
         const radioClasses = classnames({
-          'absolute h-6 w-6 appearance-none focus:outline-none focus-visible:ring-2 focus-visible:ring-dh-blue focus rounded-md': true,
+          'absolute h-6 w-6 appearance-none focus:outline-none focus:ring-3 focus:ring-dh-gold focus rounded-md': true,
           'cursor-pointer': !readOnly && !isDisabled,
         });
 
@@ -58,7 +58,7 @@ export default function ResourceIconsManager({
               <span
                 className={classnames({
                   [`icon-${icon}`]: true,
-                  'z-0 block h-6 w-6 ring-yellow-300 focus:ring-1 focus:outline-none': true,
+                  'ring-dh-gold z-0 block h-6 w-6 focus:ring-3 focus:outline-none': true,
                   'checkbox-icon-filled': isFilled,
                   'cursor-pointer': !isDisabled,
                   'checkbox-icon-disabled': isDisabled,

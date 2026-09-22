@@ -57,11 +57,11 @@ export default function Character({character, game: initialGame}: Props) {
   };
 
   const fieldClasses =
-    'mbe-4 w-full border-2 border-gray-700 rounded-sm bg-white px-2 py-1 focus:ring-3 focus:outline-none ring-yellow-300 text-dh-blue';
+    'mbe-4 w-full border-2 border-gray-700 rounded-sm bg-white px-2 py-1 focus:ring-3 focus:outline-none ring-dh-gold text-dh-blue';
 
   return (
     <>
-      <form className='mx-auto block w-[340]' onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit}>
         <label>
           <span className='font-bold'>Character name:</span>
           <input
@@ -134,7 +134,7 @@ export default function Character({character, game: initialGame}: Props) {
           <p role='alert'>Unable to save this Character. Please try again.</p>
         )}
       </form>
-      <hr />
+      <div className='border-dh-teal my-4 w-full border-t border-t-1' />
       {!game && character?.id && <JoinGame characterId={character.id} />}
       {game && (
         <>
@@ -159,6 +159,7 @@ export default function Character({character, game: initialGame}: Props) {
               gameId={game.id}
               label='Leave Game'
               confirmMessage={`Leave ${game.name}?`}
+              className='mt-6'
             />
           )}
         </>

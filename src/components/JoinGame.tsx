@@ -36,7 +36,7 @@ export default function JoinGame({characterId}: Props) {
   };
 
   return (
-    <form className='mx-auto block w-[340]' onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit}>
       <h3 className='text-dh-gold mb-0 pb-0 text-xl font-semibold tracking-tight'>
         Join a Game
       </h3>

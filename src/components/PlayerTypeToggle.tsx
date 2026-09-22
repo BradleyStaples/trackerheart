@@ -15,7 +15,7 @@ export default function PlayerTypeToggle({playerType, setPlayerType}: Props) {
   };
 
   return (
-    <footer className='bg-dh-purple fixed bottom-0 left-0 z-20 w-full border-t p-4 shadow-sm md:p-6'>
+    <footer className='bg-dh-purple border-dh-blue fixed bottom-0 left-0 z-20 w-full border-t-3 p-4 shadow-sm md:p-6'>
       <div className='mx-auto flex w-3xs items-center justify-between self-center p-2'>
         <div className='w-16 grow-0 text-right text-xl font-semibold'>
           Game Master
@@ -23,7 +23,7 @@ export default function PlayerTypeToggle({playerType, setPlayerType}: Props) {
         <label className='relative flex w-20 cursor-pointer items-center justify-between p-2 text-xl'>
           <input
             type='checkbox'
-            className='peer absolute left-1/2 h-[85%] w-[85%] -translate-x-1/2 cursor-pointer appearance-none rounded-full focus:ring-2 focus:ring-violet-900 focus:outline-none'
+            className='peer focus:ring-dh-gold absolute left-1/2 h-[85%] w-[85%] -translate-x-1/2 cursor-pointer appearance-none rounded-full focus:ring-4 focus:outline-none'
             onChange={handlePlayerType}
             checked={isPlayer}
           />

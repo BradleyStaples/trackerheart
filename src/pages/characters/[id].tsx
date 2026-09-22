@@ -1,5 +1,6 @@
 import type {InferGetServerSidePropsType, GetServerSideProps} from 'next';
 import Character from '../../components/Character';
+import Wrapper from '../../components/Wrapper';
 import type {Character as CharacterType, Game} from '../../utils/types';
 import {getCharacterById, getGameForCharacter} from '../../utils/firestore';
 import {DEVICE_ID_COOKIE} from '../../hooks/useUUID';
@@ -24,23 +25,13 @@ export default function GamePage({
   character,
   game,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  console.log('character', character);
   return (
-    <div className='flex flex-1 flex-col items-center justify-center'>
-      <main className='flex w-full max-w-3xl flex-1 flex-col items-center justify-between px-16 py-8 sm:items-start'>
-        <div className='flex flex-col items-center gap-4 text-center sm:items-start sm:text-left'>
-          <div className='mb-2 border-b pb-2'>
-            <h1 className='text-dh-gold text-3xl font-semibold tracking-tight'>
-              Trackerheart
-            </h1>
-          </div>
-          <Character
-            key={character?.id}
-            character={character ?? undefined}
-            game={game ?? undefined}
-          />
-        </div>
-      </main>
-    </div>
+    <Wrapper>
+      <Character
+        key={character?.id}
+        character={character ?? undefined}
+        game={game ?? undefined}
+      />
+    </Wrapper>
   );
 }
