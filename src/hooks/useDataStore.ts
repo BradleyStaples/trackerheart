@@ -9,6 +9,7 @@ import {
   updateGame,
   createCharacter,
   updateCharacter,
+  deleteCharacter as deleteCharacterDoc,
   getGameByShareCode,
   addCharacterToGame,
   removeCharacterFromGame,
@@ -128,6 +129,10 @@ export default function useDataStore() {
   const leaveGame = (characterId: string, gameId: string) =>
     removeCharacterFromGame(characterId, gameId);
 
+  // Errors are left to the caller so the UI can report them.
+  const deleteCharacter = (characterId: string) =>
+    deleteCharacterDoc(characterId, deviceId ?? null);
+
   return {
     getCharacters,
     getCharacter,
@@ -135,6 +140,7 @@ export default function useDataStore() {
     getGame,
     saveGame,
     saveCharacter,
+    deleteCharacter,
     joinGame,
     leaveGame,
   };

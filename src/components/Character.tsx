@@ -17,10 +17,13 @@ interface Props {
 export default function Character({character, game: initialGame}: Props) {
   const game = useGameForCharacter(character?.id, initialGame);
   const router = useRouter();
-  const {saveCharacter} = useDataStore();
-  const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>(
-    'idle',
-  );
+  const {saveCharacter, deleteCharacter} = useDataStore();
+  const [saveStatus, setSaveStatus] = useState<
+    'idle' | 'saving' | 'saved' | 'error'
+  >('idle');
+  const [deleteStatus, setDeleteStatus] = useState<
+    'idle' | 'deleting' | 'error'
+  >('idle');
 
   const handleSubmit = async (event: SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -29,7 +32,7 @@ export default function Character({character, game: initialGame}: Props) {
     const getNumber = (field: string) =>
       parseInt(String(formData.get(field) ?? '0'), 10) || 0;
 
-    setStatus('saving');
+    setSaveStatus('saving');
     try {
       const id = await saveCharacter({
         id: character?.id,
@@ -46,13 +49,29 @@ export default function Character({character, game: initialGame}: Props) {
       if (character?.id) {
         // re-run getServerSideProps so the page shows the saved data
         await router.replace(router.asPath);
-        setStatus('saved');
+        setSaveStatus('saved');
       } else {
         await router.push(`/characters/${id}`);
       }
     } catch (error) {
       console.error('Unable to save Character', {error});
-      setStatus('error');
+      setSaveStatus('error');
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!character?.id) return;
+    if (!window.confirm(`Delete ${character.name}? This cannot be undone.`)) {
+      return;
+    }
+
+    setDeleteStatus('deleting');
+    try {
+      await deleteCharacter(character.id);
+      await router.push('/?tab=Player');
+    } catch (error) {
+      console.error('Unable to delete Character', {error});
+      setDeleteStatus('error');
     }
   };
 
@@ -118,21 +137,39 @@ export default function Character({character, game: initialGame}: Props) {
           showMaxDropdown
           icon='shield'
         />
-        <Button
-          label='Back to Characters'
-          role='secondary'
-          link='/?tab=Player'
-        />
-        <Button
-          type='submit'
-          label={status === 'saving' ? 'Saving...' : 'Save'}
-          role='primary'
-          className='ml-8'
-        />
-        {status === 'saved' && <p role='status'>Saved.</p>}
-        {status === 'error' && (
-          <p role='alert'>Unable to save this Character. Please try again.</p>
-        )}
+        <div className='mt-8 flex justify-between'>
+          {character?.id && (
+            <Button
+              label={deleteStatus === 'deleting' ? 'Deleting...' : 'Delete'}
+              role='destructive'
+              onClick={handleDelete}
+            />
+          )}
+          <Button
+            type='submit'
+            label={saveStatus === 'saving' ? 'Saving...' : 'Save'}
+            role='primary'
+          />
+        </div>
+        <div className='text-center'>
+          {saveStatus === 'saved' && <p role='status'>Saved.</p>}
+          {saveStatus === 'error' && (
+            <p role='alert'>Unable to save this Character. Please try again.</p>
+          )}
+          {deleteStatus === 'error' && (
+            <p role='alert'>
+              Unable to delete this Character. Please try again.
+            </p>
+          )}
+        </div>
+        <div className='flex justify-center text-center'>
+          <Button
+            label='Back to All Characters'
+            role='secondary'
+            link='/?tab=Player'
+            className='mt-4'
+          />
+        </div>
       </form>
       <div className='border-dh-teal my-4 w-full border-t border-t-2' />
       {game && (

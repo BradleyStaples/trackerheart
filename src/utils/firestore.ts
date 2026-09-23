@@ -5,6 +5,7 @@ import {
   query,
   where,
   getDocs,
+  getDoc,
   documentId,
   doc,
   setDoc,
@@ -256,6 +257,35 @@ export async function updateCharacter(
     });
   } catch (error) {
     console.error('Error updating Character:', error);
+    throw error;
+  }
+}
+
+// Confirms the Character belongs to deviceId before deleting it, and also
+// removes any GameCharacters mapping for it, so it doesn't linger in a
+// Game's character list once deleted.
+export async function deleteCharacter(
+  characterId: string,
+  deviceId: string | null,
+): Promise<void> {
+  try {
+    const characterRef = doc(getDb(), 'Characters', characterId);
+    const characterSnap = await getDoc(characterRef);
+    if (!characterSnap.exists() || characterSnap.data().deviceId !== deviceId) {
+      throw new Error('Character not found for this device.');
+    }
+
+    const mappingsQuery = query(
+      collection(getDb(), 'GameCharacters'),
+      where('characterId', '==', characterId),
+    );
+    const mappingSnapshot = await getDocs(mappingsQuery);
+    await Promise.all([
+      deleteDoc(characterRef),
+      ...mappingSnapshot.docs.map((docSnap) => deleteDoc(docSnap.ref)),
+    ]);
+  } catch (error) {
+    console.error('Error deleting Character:', error);
     throw error;
   }
 }
