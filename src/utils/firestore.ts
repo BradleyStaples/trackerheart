@@ -151,6 +151,35 @@ export async function updateGame(
   }
 }
 
+// Confirms the Game belongs to deviceId before deleting it, and also removes
+// every GameCharacters mapping for it, so its Characters aren't left pointing
+// at a Game that no longer exists.
+export async function deleteGame(
+  gameId: string,
+  deviceId: string | null,
+): Promise<void> {
+  try {
+    const gameRef = doc(getDb(), 'Games', gameId);
+    const gameSnap = await getDoc(gameRef);
+    if (!gameSnap.exists() || gameSnap.data().deviceId !== deviceId) {
+      throw new Error('Game not found for this device.');
+    }
+
+    const mappingsQuery = query(
+      collection(getDb(), 'GameCharacters'),
+      where('gameId', '==', gameId),
+    );
+    const mappingSnapshot = await getDocs(mappingsQuery);
+    await Promise.all([
+      deleteDoc(gameRef),
+      ...mappingSnapshot.docs.map((docSnap) => deleteDoc(docSnap.ref)),
+    ]);
+  } catch (error) {
+    console.error('Error deleting Game:', error);
+    throw error;
+  }
+}
+
 export async function getCharactersForDevice(
   deviceId: string,
 ): Promise<Character[]> {

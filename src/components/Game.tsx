@@ -16,10 +16,13 @@ interface Props {
 export default function Game({game, characters: initialCharacters}: Props) {
   const characters = useCharactersInGame(game?.id, initialCharacters);
   const router = useRouter();
-  const {saveGame} = useDataStore();
-  const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>(
-    'idle',
-  );
+  const {saveGame, deleteGame} = useDataStore();
+  const [saveStatus, setSaveStatus] = useState<
+    'idle' | 'saving' | 'saved' | 'error'
+  >('idle');
+  const [deleteStatus, setDeleteStatus] = useState<
+    'idle' | 'deleting' | 'error'
+  >('idle');
 
   const handleSubmit = async (event: SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -27,7 +30,7 @@ export default function Game({game, characters: initialCharacters}: Props) {
     // no fear radio is checked when the value is 0
     const fear = parseInt(String(formData.get('fear') ?? '0'), 10);
 
-    setStatus('saving');
+    setSaveStatus('saving');
     try {
       const id = await saveGame({
         id: game?.id,
@@ -38,13 +41,29 @@ export default function Game({game, characters: initialCharacters}: Props) {
       if (game?.id) {
         // re-run getServerSideProps so the page shows the saved data
         await router.replace(router.asPath);
-        setStatus('saved');
+        setSaveStatus('saved');
       } else {
         await router.push(`/games/${id}`);
       }
     } catch (error) {
       console.error('Unable to save Game', {error});
-      setStatus('error');
+      setSaveStatus('error');
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!game?.id) return;
+    if (!window.confirm(`Delete ${game.name}? This cannot be undone.`)) {
+      return;
+    }
+
+    setDeleteStatus('deleting');
+    try {
+      await deleteGame(game.id);
+      await router.push('/?tab=GameMaster');
+    } catch (error) {
+      console.error('Unable to delete Game', {error});
+      setDeleteStatus('error');
     }
   };
 
@@ -93,96 +112,112 @@ export default function Game({game, characters: initialCharacters}: Props) {
           maxLimit={12}
           icon='skull'
         />
-        <Button
-          label='Back to Games'
-          role='secondary'
-          link='/?tab=GameMaster'
-        />
-        <Button
-          className='ml-8'
-          type='submit'
-          label={status === 'saving' ? 'Saving...' : 'Save'}
-          role='primary'
-        />
-        {status === 'saved' && <p role='status'>Saved.</p>}
-        {status === 'error' && (
-          <p role='alert'>Unable to save this Game. Please try again.</p>
-        )}
+        <div className='mt-8 flex justify-between'>
+          {game?.id && (
+            <Button
+              label={deleteStatus === 'deleting' ? 'Deleting...' : 'Delete'}
+              role='destructive'
+              onClick={handleDelete}
+            />
+          )}
+          <Button
+            type='submit'
+            label={saveStatus === 'saving' ? 'Saving...' : 'Save'}
+            role='primary'
+          />
+        </div>
+        <div className='text-center'>
+          {saveStatus === 'saved' && <p role='status'>Saved.</p>}
+          {saveStatus === 'error' && (
+            <p role='alert'>Unable to save this Game. Please try again.</p>
+          )}
+          {deleteStatus === 'error' && (
+            <p role='alert'>Unable to delete this Game. Please try again.</p>
+          )}
+        </div>
+        <div className='flex justify-center text-center'>
+          <Button
+            label='Back to All Games'
+            role='secondary'
+            link='/?tab=GameMaster'
+            className='mt-4'
+          />
+        </div>
       </form>
-      <div className='border-dh-teal my-4 w-full border-t border-t-2' />
-      {characters.length === 0 && <p>This game has no joined characters.</p>}
       {characters.length > 0 && (
-        <h3 className='mbs-2 mbe-2 text-center text-xl font-semibold tracking-tight'>
-          Joined Characters: {characters.length}
-        </h3>
+        <>
+          <div className='border-dh-teal my-4 w-full border-t border-t-2' />
+          <h3 className='mbs-2 mbe-2 text-center text-xl font-semibold tracking-tight'>
+            Characters in game: {characters.length}
+          </h3>
+        </>
       )}
-      <ul>
-        {characters.length === 0 && (
-          <li>There are no Characters in this Game.</li>
-        )}
-        {characters.map((character, index) => {
-          const liClasses =
-            index === 0
-              ? 'mbe-4 w-full'
-              : 'mbe-4 w-full border-t border-t-2 border-dh-teal pt-4';
+      {characters.length > 0 && (
+        <ul>
+          {characters.map((character, index) => {
+            const liClasses =
+              index === 0
+                ? 'mbe-4 w-full'
+                : 'mbe-4 w-full border-t border-t-2 border-dh-teal pt-4';
 
-          return (
-            <li key={character.id} className={liClasses}>
-              <h4 className='text-dh-gold mbe-4 text-center text-lg'>
-                <span className='pe-2 font-bold'>{character.name}</span>(
-                {character.playerName})
-              </h4>
-              <div className='mx-auto w-48'>
-                <ResourceIcons
-                  attribute='hope'
-                  label='Hope'
-                  value={character?.hope ?? 0}
-                  maxValue={6}
-                  maxLimit={6}
-                  icon='heart'
-                  readOnly
-                />
-                <ResourceIcons
-                  attribute='hitPoints'
-                  label='Hit Points'
-                  value={character?.hitPoints ?? 0}
-                  maxValue={character?.maxHitPoints ?? 0}
-                  maxLimit={12}
-                  icon='cross'
-                  readOnly
-                />
-                <ResourceIcons
-                  attribute='stress'
-                  label='Stress'
-                  value={character?.stress ?? 0}
-                  maxValue={character?.maxStress ?? 0}
-                  maxLimit={12}
-                  icon='star'
-                  readOnly
-                />
-                <ResourceIcons
-                  attribute='armorSlots'
-                  label='Armor Slots'
-                  value={character?.armorSlots ?? 0}
-                  maxValue={character?.maxArmorSlots ?? 0}
-                  maxLimit={12}
-                  icon='shield'
-                  readOnly
-                />
-                {game?.id && (
-                  <LeaveGame
-                    characterId={character.id}
-                    gameId={game.id}
-                    label='Remove from Game'
-                    confirmMessage={`Remove ${character.name} from ${game.name}?`}
-                    className='mbs-2 block w-full text-center'
+            return (
+              <li key={character.id} className={liClasses}>
+                <h4 className='text-dh-gold mbe-4 text-center text-lg'>
+                  <span className='pe-2 font-bold'>{character.name}</span>(
+                  {character.playerName})
+                </h4>
+                <div className='mx-auto w-48'>
+                  <ResourceIcons
+                    attribute='hope'
+                    label='Hope'
+                    value={character?.hope ?? 0}
+                    maxValue={6}
+                    maxLimit={6}
+                    icon='heart'
+                    readOnly
                   />
-                )}
-              </div>
-            </li>
-          );
-        })}
-      </ul>
+                  <ResourceIcons
+                    attribute='hitPoints'
+                    label='Hit Points'
+                    value={character?.hitPoints ?? 0}
+                    maxValue={character?.maxHitPoints ?? 0}
+                    maxLimit={12}
+                    icon='cross'
+                    readOnly
+                  />
+                  <ResourceIcons
+                    attribute='stress'
+                    label='Stress'
+                    value={character?.stress ?? 0}
+                    maxValue={character?.maxStress ?? 0}
+                    maxLimit={12}
+                    icon='star'
+                    readOnly
+                  />
+                  <ResourceIcons
+                    attribute='armorSlots'
+                    label='Armor Slots'
+                    value={character?.armorSlots ?? 0}
+                    maxValue={character?.maxArmorSlots ?? 0}
+                    maxLimit={12}
+                    icon='shield'
+                    readOnly
+                  />
+                  {game?.id && (
+                    <LeaveGame
+                      characterId={character.id}
+                      gameId={game.id}
+                      label='Remove from Game'
+                      confirmMessage={`Remove ${character.name} from ${game.name}?`}
+                      className='mbs-2 block w-full text-center'
+                    />
+                  )}
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )}
     </>
   );
 }
