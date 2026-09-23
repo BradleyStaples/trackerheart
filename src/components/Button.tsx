@@ -1,8 +1,10 @@
 import classnames from 'classnames';
 
+export type ButtonRole = 'primary' | 'secondary' | 'tertiary' | 'destructive';
+
 interface Props {
   label: string;
-  role?: 'primary' | 'secondary' | 'tertiary' | 'destructive';
+  role?: ButtonRole;
   type?: 'button' | 'submit';
   link?: string;
   onClick?: () => void;

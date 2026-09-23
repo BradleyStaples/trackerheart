@@ -22,7 +22,7 @@ export default function Player() {
 
   return (
     <>
-      <h3 className='text-dh-gold pb-4 text-xl font-semibold tracking-tight'>
+      <h3 className='text-dh-gold pb-4 text-xl font-semibold'>
         Your Characters:
       </h3>
       <ul>

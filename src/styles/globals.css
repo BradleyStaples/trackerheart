@@ -1,4 +1,6 @@
 @import 'tailwindcss';
+@import 'flowbite-react/plugin/tailwindcss';
+@source '../../.flowbite-react/class-list.json';
 
 @theme {
   --color-dh-purple: #6946a6;
@@ -11,15 +13,24 @@
 body {
   background: var(--color-dh-purple);
   color: var(--color-dh-gray);
+}
+
+* {
   font-family: var(--font-copy), sans-serif;
 }
 
 h1,
+h1 *,
 h2,
+h2 *,
 h3,
+h3 *,
 h4,
+h4 *,
 h5,
-h6 {
+h5 *,
+h6,
+h6 * {
   font-family: var(--font-headings);
 }
 

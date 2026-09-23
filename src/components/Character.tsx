@@ -8,6 +8,7 @@ import ResourceIcons from './ResourceIcons';
 import useDataStore from '../hooks/useDataStore';
 import useGameForCharacter from '../hooks/useGameForCharacter';
 import type {Character, Game} from '../utils/types';
+import ConfirmModal from './ConfirmModal';
 
 interface Props {
   character: Character | undefined;
@@ -61,10 +62,6 @@ export default function Character({character, game: initialGame}: Props) {
 
   const handleDelete = async () => {
     if (!character?.id) return;
-    if (!window.confirm(`Delete ${character.name}? This cannot be undone.`)) {
-      return;
-    }
-
     setDeleteStatus('deleting');
     try {
       await deleteCharacter(character.id);
@@ -139,10 +136,12 @@ export default function Character({character, game: initialGame}: Props) {
         />
         <div className='mt-8 flex justify-between'>
           {character?.id && (
-            <Button
-              label={deleteStatus === 'deleting' ? 'Deleting...' : 'Delete'}
-              role='destructive'
-              onClick={handleDelete}
+            <ConfirmModal
+              buttonLabel={
+                deleteStatus === 'deleting' ? 'Deleting...' : 'Delete'
+              }
+              message={`Are you sure you want to delete ${character.name}? This cannot be undone.`}
+              onConfirm={handleDelete}
             />
           )}
           <Button
@@ -171,7 +170,7 @@ export default function Character({character, game: initialGame}: Props) {
           />
         </div>
       </form>
-      <div className='border-dh-teal my-4 w-full border-t border-t-2' />
+      <div className='border-dh-teal my-4 w-full border-t-2' />
       {game && (
         <h3 className='text-dh-teal mbe-4 text-center text-xl font-semibold tracking-tight'>
           This character is part of{' '}

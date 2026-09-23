@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import Button from './Button';
+import ConfirmModal from './ConfirmModal';
 import useDataStore from '../hooks/useDataStore';
 
 interface Props {
@@ -21,8 +21,6 @@ export default function LeaveGame({
   const [status, setStatus] = useState<'idle' | 'leaving' | 'error'>('idle');
 
   const handleClick = async () => {
-    if (!window.confirm(confirmMessage)) return;
-
     setStatus('leaving');
     try {
       await leaveGame(characterId, gameId);
@@ -36,10 +34,11 @@ export default function LeaveGame({
 
   return (
     <div className={className}>
-      <Button
-        label={status === 'leaving' ? 'Removing...' : label}
-        role='tertiary'
-        onClick={handleClick}
+      <ConfirmModal
+        buttonLabel={status === 'leaving' ? 'Removing...' : label}
+        buttonRole='tertiary'
+        message={confirmMessage}
+        onConfirm={handleClick}
       />
       {status === 'error' && (
         <p role='alert'>Unable to remove this Character. Please try again.</p>

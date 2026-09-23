@@ -37,11 +37,11 @@ export default function JoinGame({characterId}: Props) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <h3 className='text-dh-gold mb-0 pb-0 text-xl font-semibold tracking-tight'>
+      <h3 className='text-dh-gold mb-0 pb-0 text-xl font-semibold'>
         Join a Game
       </h3>
       <label>
-        <span className='font-bold'>Share Code:</span>
+        <span className='font-bold'>Invite Code:</span>
         <input
           type='text'
           name='shareCode'

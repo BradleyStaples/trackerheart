@@ -1,4 +1,4 @@
-import {SyntheticEvent, useState, type FormEvent} from 'react';
+import {SyntheticEvent, useState} from 'react';
 import {useRouter} from 'next/router';
 import Button from './Button';
 import ResourceIconsManager from './ResourceIconsManager';
@@ -7,6 +7,7 @@ import LeaveGame from './LeaveGame';
 import useDataStore from '../hooks/useDataStore';
 import useCharactersInGame from '../hooks/useCharactersInGame';
 import type {Game, Character} from '../utils/types';
+import ConfirmModal from './ConfirmModal';
 
 interface Props {
   game: Game | undefined;
@@ -53,10 +54,6 @@ export default function Game({game, characters: initialCharacters}: Props) {
 
   const handleDelete = async () => {
     if (!game?.id) return;
-    if (!window.confirm(`Delete ${game.name}? This cannot be undone.`)) {
-      return;
-    }
-
     setDeleteStatus('deleting');
     try {
       await deleteGame(game.id);
@@ -84,7 +81,7 @@ export default function Game({game, characters: initialCharacters}: Props) {
           />
         </label>
         <label>
-          <span className='font-bold'>GameMaster name:</span>
+          <span className='font-bold'>GM name:</span>
           <input
             type='text'
             name='gameMasterName'
@@ -94,7 +91,7 @@ export default function Game({game, characters: initialCharacters}: Props) {
         </label>
         {game?.id && (
           <label>
-            <span className='font-bold'>Share Code:</span>
+            <span className='font-bold'>Invite Code:</span>
             <input
               type='text'
               readOnly
@@ -114,10 +111,12 @@ export default function Game({game, characters: initialCharacters}: Props) {
         />
         <div className='mt-8 flex justify-between'>
           {game?.id && (
-            <Button
-              label={deleteStatus === 'deleting' ? 'Deleting...' : 'Delete'}
-              role='destructive'
-              onClick={handleDelete}
+            <ConfirmModal
+              buttonLabel={
+                deleteStatus === 'deleting' ? 'Deleting...' : 'Delete'
+              }
+              message={`Are you sure you want to delete ${game.name}? This cannot be undone.`}
+              onConfirm={handleDelete}
             />
           )}
           <Button
@@ -146,7 +145,7 @@ export default function Game({game, characters: initialCharacters}: Props) {
       </form>
       {characters.length > 0 && (
         <>
-          <div className='border-dh-teal my-4 w-full border-t border-t-2' />
+          <div className='border-dh-teal my-4 w-full border-t-2' />
           <h3 className='mbs-2 mbe-2 text-center text-xl font-semibold tracking-tight'>
             Characters in game: {characters.length}
           </h3>
@@ -158,7 +157,7 @@ export default function Game({game, characters: initialCharacters}: Props) {
             const liClasses =
               index === 0
                 ? 'mbe-4 w-full'
-                : 'mbe-4 w-full border-t border-t-2 border-dh-teal pt-4';
+                : 'mbe-4 w-full border-t-2 border-dh-teal pt-4';
 
             return (
               <li key={character.id} className={liClasses}>

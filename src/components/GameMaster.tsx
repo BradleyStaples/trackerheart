@@ -22,9 +22,7 @@ export default function GameMaster() {
 
   return (
     <>
-      <h3 className='text-dh-gold pb-4 text-xl font-semibold tracking-tight'>
-        Your Games:
-      </h3>
+      <h3 className='text-dh-gold pb-4 text-xl font-semibold'>Your Games:</h3>
       <ul>
         {games === undefined && <li>Loading...</li>}
         {games.length === 0 && <li>You do not have any Games.</li>}
