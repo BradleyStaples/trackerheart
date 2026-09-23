@@ -53,7 +53,7 @@ export default function Game({game, characters: initialCharacters}: Props) {
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
+      <form className='mx-auto w-68' onSubmit={handleSubmit}>
         <label>
           <span className='font-bold'>Game name:</span>
           <input
@@ -109,11 +109,14 @@ export default function Game({game, characters: initialCharacters}: Props) {
           <p role='alert'>Unable to save this Game. Please try again.</p>
         )}
       </form>
-      <hr />
-      <h3 className='mb-0 w-full pb-0 text-center text-xl font-semibold tracking-tight'>
-        Characters in this game:
-      </h3>
-      <ul className='mx-auto'>
+      <div className='border-dh-teal my-4 w-full border-t border-t-2' />
+      {characters.length === 0 && <p>This game has no joined characters.</p>}
+      {characters.length > 0 && (
+        <h3 className='mbs-2 mbe-2 text-center text-xl font-semibold tracking-tight'>
+          Joined Characters: {characters.length}
+        </h3>
+      )}
+      <ul>
         {characters.length === 0 && (
           <li>There are no Characters in this Game.</li>
         )}
@@ -121,58 +124,61 @@ export default function Game({game, characters: initialCharacters}: Props) {
           const liClasses =
             index === 0
               ? 'mbe-4 w-full'
-              : 'mbe-4 w-full border-t border-t-3 border-dh-blue pt-4';
+              : 'mbe-4 w-full border-t border-t-2 border-dh-teal pt-4';
 
           return (
             <li key={character.id} className={liClasses}>
-              <h4 className='text-dh-gold mbe-4 text-lg'>
+              <h4 className='text-dh-gold mbe-4 text-center text-lg'>
                 <span className='pe-2 font-bold'>{character.name}</span>(
                 {character.playerName})
               </h4>
-              <ResourceIcons
-                attribute='hope'
-                label='Hope'
-                value={character?.hope ?? 0}
-                maxValue={6}
-                maxLimit={6}
-                icon='heart'
-                readOnly
-              />
-              <ResourceIcons
-                attribute='hitPoints'
-                label='Hit Points'
-                value={character?.hitPoints ?? 0}
-                maxValue={character?.maxHitPoints ?? 0}
-                maxLimit={12}
-                icon='cross'
-                readOnly
-              />
-              <ResourceIcons
-                attribute='stress'
-                label='Stress'
-                value={character?.stress ?? 0}
-                maxValue={character?.maxStress ?? 0}
-                maxLimit={12}
-                icon='star'
-                readOnly
-              />
-              <ResourceIcons
-                attribute='armorSlots'
-                label='Armor Slots'
-                value={character?.armorSlots ?? 0}
-                maxValue={character?.maxArmorSlots ?? 0}
-                maxLimit={12}
-                icon='shield'
-                readOnly
-              />
-              {game?.id && (
-                <LeaveGame
-                  characterId={character.id}
-                  gameId={game.id}
-                  label='Remove from Game'
-                  confirmMessage={`Remove ${character.name} from ${game.name}?`}
+              <div className='mx-auto w-48'>
+                <ResourceIcons
+                  attribute='hope'
+                  label='Hope'
+                  value={character?.hope ?? 0}
+                  maxValue={6}
+                  maxLimit={6}
+                  icon='heart'
+                  readOnly
                 />
-              )}
+                <ResourceIcons
+                  attribute='hitPoints'
+                  label='Hit Points'
+                  value={character?.hitPoints ?? 0}
+                  maxValue={character?.maxHitPoints ?? 0}
+                  maxLimit={12}
+                  icon='cross'
+                  readOnly
+                />
+                <ResourceIcons
+                  attribute='stress'
+                  label='Stress'
+                  value={character?.stress ?? 0}
+                  maxValue={character?.maxStress ?? 0}
+                  maxLimit={12}
+                  icon='star'
+                  readOnly
+                />
+                <ResourceIcons
+                  attribute='armorSlots'
+                  label='Armor Slots'
+                  value={character?.armorSlots ?? 0}
+                  maxValue={character?.maxArmorSlots ?? 0}
+                  maxLimit={12}
+                  icon='shield'
+                  readOnly
+                />
+                {game?.id && (
+                  <LeaveGame
+                    characterId={character.id}
+                    gameId={game.id}
+                    label='Remove from Game'
+                    confirmMessage={`Remove ${character.name} from ${game.name}?`}
+                    className='mbs-2 block w-full text-center'
+                  />
+                )}
+              </div>
             </li>
           );
         })}

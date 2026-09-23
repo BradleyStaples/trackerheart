@@ -22,7 +22,7 @@ export default function GameMaster() {
 
   return (
     <>
-      <h3 className='text-dh-gold mb-0 pb-0 text-xl font-semibold tracking-tight'>
+      <h3 className='text-dh-gold pb-4 text-xl font-semibold tracking-tight'>
         Your Games:
       </h3>
       <ul>
@@ -30,12 +30,12 @@ export default function GameMaster() {
         {games.length === 0 && <li>You do not have any Games.</li>}
         {games.map((game) => {
           return (
-            <li key={game.id} className='py-2'>
+            <li key={game.id} className='pb-4'>
               <Button
                 label={game.name}
                 role='primary'
                 link={`/games/${game.id}`}
-                className='mbe-1 inline-block text-lg'
+                className='text-lg'
               />
             </li>
           );

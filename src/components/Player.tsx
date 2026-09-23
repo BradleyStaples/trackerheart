@@ -22,19 +22,19 @@ export default function Player() {
 
   return (
     <>
-      <h3 className='text-dh-gold mb-0 pb-0 text-xl font-semibold tracking-tight'>
+      <h3 className='text-dh-gold pb-4 text-xl font-semibold tracking-tight'>
         Your Characters:
       </h3>
-      <ul className='m-0 p-0'>
+      <ul>
         {characters.length === 0 && <li>You do not have any Characters.</li>}
         {characters.map((character) => {
           return (
-            <li key={character.id} className='py-2'>
+            <li key={character.id} className='pb-4'>
               <Button
                 label={character.name}
                 role='primary'
                 link={`/characters/${character.id}`}
-                className='mbe-1 inline-block text-lg'
+                className='text-lg'
               />
             </li>
           );

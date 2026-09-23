@@ -35,16 +35,15 @@ export default function LeaveGame({
   };
 
   return (
-    <>
+    <div className={className}>
       <Button
         label={status === 'leaving' ? 'Removing...' : label}
         role='tertiary'
-        className={className}
         onClick={handleClick}
       />
       {status === 'error' && (
         <p role='alert'>Unable to remove this Character. Please try again.</p>
       )}
-    </>
+    </div>
   );
 }

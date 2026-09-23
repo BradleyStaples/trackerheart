@@ -61,7 +61,7 @@ export default function Character({character, game: initialGame}: Props) {
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
+      <form className='mx-auto w-68' onSubmit={handleSubmit}>
         <label>
           <span className='font-bold'>Character name:</span>
           <input
@@ -134,16 +134,16 @@ export default function Character({character, game: initialGame}: Props) {
           <p role='alert'>Unable to save this Character. Please try again.</p>
         )}
       </form>
-      <div className='border-dh-teal my-4 w-full border-t border-t-1' />
-      {!game && character?.id && <JoinGame characterId={character.id} />}
+      <div className='border-dh-teal my-4 w-full border-t border-t-2' />
       {game && (
-        <>
-          <h3 className='text-dh-gold mb-0 pb-0 text-xl font-semibold tracking-tight'>
-            This character is playing in:
-            <br />
-            <span className='font-bold'>{game.name}</span> (
-            {game.gameMasterName})
-          </h3>
+        <h3 className='text-dh-teal mbe-4 text-center text-xl font-semibold tracking-tight'>
+          This character is part of{' '}
+          <span className='text-dh-gold font-bold'>{game.name}</span> by{' '}
+          {game.gameMasterName}
+        </h3>
+      )}
+      <div className='mx-auto w-48'>
+        {game && (
           <ResourceIcons
             attribute='fear'
             label='Fear'
@@ -153,17 +153,18 @@ export default function Character({character, game: initialGame}: Props) {
             icon='skull'
             readOnly
           />
-          {character?.id && (
-            <LeaveGame
-              characterId={character.id}
-              gameId={game.id}
-              label='Leave Game'
-              confirmMessage={`Leave ${game.name}?`}
-              className='mt-6'
-            />
-          )}
-        </>
-      )}
+        )}
+        {game && character?.id && (
+          <LeaveGame
+            characterId={character.id}
+            gameId={game.id}
+            label='Leave Game'
+            confirmMessage={`Leave ${game.name}?`}
+            className='mx-auto mt-6 block w-32 text-center'
+          />
+        )}
+        {!game && character?.id && <JoinGame characterId={character.id} />}
+      </div>
     </>
   );
 }
