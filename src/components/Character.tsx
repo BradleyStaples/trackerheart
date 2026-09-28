@@ -172,12 +172,7 @@ export default function Character({character, game: initialGame}: Props) {
           />
         </div>
         <div className='flex justify-center text-center'>
-          <Button
-            label='Back to All Characters'
-            variant='secondary'
-            link='/?tab=Player'
-            className='mt-4'
-          />
+          <Button label='Home' variant='secondary' link='/' className='mt-4' />
         </div>
       </form>
       <div className='border-dh-teal my-4 w-full border-t-2' />

@@ -22,8 +22,8 @@ export default function Player() {
 
   return (
     <>
-      <h3 className='text-dh-gold pb-4 text-xl font-semibold'>
-        Your Characters:
+      <h3 className='text-dh-gold mt-12 pb-4 text-xl font-semibold'>
+        As a Player, Your Characters:
       </h3>
       <ul>
         {characters.length === 0 && <li>You do not have any Characters.</li>}

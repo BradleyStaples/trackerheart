@@ -1,5 +1,3 @@
-export type PlayerType = 'Player' | 'GameMaster';
-
 export interface Character {
   id: string;
   name: string;

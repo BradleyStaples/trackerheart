@@ -136,12 +136,7 @@ export default function Game({game, characters: initialCharacters}: Props) {
           )}
         </div>
         <div className='flex justify-center text-center'>
-          <Button
-            label='Back to All Games'
-            variant='secondary'
-            link='/?tab=GameMaster'
-            className='mt-4'
-          />
+          <Button label='Home' variant='secondary' link='/' className='mt-4' />
         </div>
       </form>
       {characters.length > 0 && (
