@@ -109,21 +109,25 @@ export default function Game({game, characters: initialCharacters}: Props) {
           maxLimit={12}
           icon='skull'
         />
-        <div className='mt-8 flex justify-between'>
-          {game?.id && (
-            <ConfirmModal
-              buttonLabel={
-                deleteStatus === 'deleting' ? 'Deleting...' : 'Delete'
-              }
-              message={`Are you sure you want to delete ${game.name}? This cannot be undone.`}
-              onConfirm={handleDelete}
-            />
-          )}
+        <div className='mt-8 grid grid-cols-3 gap-4'>
+          <Button label='Home' variant='secondary' link='/' size='full' />
+          <div>
+            {game?.id && (
+              <ConfirmModal
+                buttonLabel={
+                  deleteStatus === 'deleting' ? 'Deleting...' : 'Delete'
+                }
+                message={`Are you sure you want to delete ${game.name}? This cannot be undone.`}
+                onConfirm={handleDelete}
+                buttonSize='full'
+              />
+            )}
+          </div>
           <Button
             type='submit'
             label={saveStatus === 'saving' ? 'Saving...' : 'Save'}
             variant='primary'
-            size='large'
+            size='full'
           />
         </div>
         <div className='text-center'>
@@ -134,9 +138,6 @@ export default function Game({game, characters: initialCharacters}: Props) {
           {deleteStatus === 'error' && (
             <p role='alert'>Unable to delete this Game. Please try again.</p>
           )}
-        </div>
-        <div className='flex justify-center text-center'>
-          <Button label='Home' variant='secondary' link='/' className='mt-4' />
         </div>
       </form>
       {characters.length > 0 && (

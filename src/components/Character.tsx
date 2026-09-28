@@ -135,23 +135,27 @@ export default function Character({character, game: initialGame}: Props) {
           showMaxDropdown
           icon='shield'
         />
-        <div className='mt-8 flex justify-between'>
-          {character?.id && (
-            <ConfirmModal
-              buttonLabel={
-                deleteStatus === 'deleting' ? 'Deleting...' : 'Delete'
-              }
-              buttonStyle={{anchorName: '--delete-button-anchor'}}
-              message={`Are you sure you want to delete ${character.name}? This cannot be undone.`}
-              onConfirm={handleDelete}
-            />
-          )}
+        <div className='mt-8 grid grid-cols-3 gap-4'>
+          <Button label='Home' variant='secondary' link='/' size='full' />
+          <div>
+            {character?.id && (
+              <ConfirmModal
+                buttonLabel={
+                  deleteStatus === 'deleting' ? 'Deleting...' : 'Delete'
+                }
+                buttonStyle={{anchorName: '--delete-button-anchor'}}
+                buttonSize='full'
+                message={`Are you sure you want to delete ${character.name}? This cannot be undone.`}
+                onConfirm={handleDelete}
+              />
+            )}
+          </div>
           <Button
             style={{anchorName: '--save-button-anchor'}}
             type='submit'
             label={saveStatus === 'saving' ? 'Saving...' : 'Save'}
             variant='primary'
-            size='large'
+            size='full'
           />
         </div>
         <div className='text-center'>
@@ -170,9 +174,6 @@ export default function Character({character, game: initialGame}: Props) {
             show={deleteStatus === 'error'}
             anchorName='--save-button-anchor'
           />
-        </div>
-        <div className='flex justify-center text-center'>
-          <Button label='Home' variant='secondary' link='/' className='mt-4' />
         </div>
       </form>
       <div className='border-dh-teal my-4 w-full border-t-2' />

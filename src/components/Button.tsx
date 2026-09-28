@@ -3,7 +3,7 @@ import type {ComponentPropsWithoutRef} from 'react';
 
 export type ButtonVariant =
   'primary' | 'secondary' | 'tertiary' | 'destructive';
-export type ButtonSize = 'small' | 'medium' | 'large';
+export type ButtonSize = 'small' | 'medium' | 'large' | 'full';
 
 interface Props extends ComponentPropsWithoutRef<'button'> {
   label: string;
@@ -29,6 +29,7 @@ export default function Button({
     'px-2 py-1': size === 'small',
     'px-2 py-2.5': size === 'medium',
     'px-4 py-2.5': size === 'large',
+    'w-full py-2.5': size === 'full',
     'text-dh-purple from-yellow-300 via-yellow-400 to-yellow-500 hover:text-violet-900 active:text-violet-900 border border-purple-800 hover:border-purple-900 active:border-purple-900':
       variant === 'primary',
     'text-dh-purple from-teal-300 via-teal-400 to-teal-500 hover:text-teal-900 active:text-teal-900 border border-purple-800 hover:border-purple-900 active:border-purple-900':
