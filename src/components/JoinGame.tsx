@@ -53,7 +53,8 @@ export default function JoinGame({characterId}: Props) {
       <Button
         type='submit'
         label={status === 'joining' ? 'Joining...' : 'Join Game'}
-        role='primary'
+        variant='primary'
+        size='large'
       />
       {status === 'notFound' && (
         <p role='alert'>No Game found with that Share Code.</p>

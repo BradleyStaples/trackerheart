@@ -31,7 +31,8 @@ export default function GameMaster() {
             <li key={game.id} className='pb-4'>
               <Button
                 label={game.name}
-                role='primary'
+                variant='primary'
+                size='large'
                 link={`/games/${game.id}`}
                 className='text-lg'
               />
@@ -39,7 +40,12 @@ export default function GameMaster() {
           );
         })}
       </ul>
-      <Button label='Add New Game' role='tertiary' link='/games/new' />
+      <Button
+        label='Add New Game'
+        variant='tertiary'
+        size='small'
+        link='/games/new'
+      />
     </>
   );
 }

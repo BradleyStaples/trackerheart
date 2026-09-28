@@ -122,7 +122,8 @@ export default function Game({game, characters: initialCharacters}: Props) {
           <Button
             type='submit'
             label={saveStatus === 'saving' ? 'Saving...' : 'Save'}
-            role='primary'
+            variant='primary'
+            size='large'
           />
         </div>
         <div className='text-center'>
@@ -137,7 +138,7 @@ export default function Game({game, characters: initialCharacters}: Props) {
         <div className='flex justify-center text-center'>
           <Button
             label='Back to All Games'
-            role='secondary'
+            variant='secondary'
             link='/?tab=GameMaster'
             className='mt-4'
           />

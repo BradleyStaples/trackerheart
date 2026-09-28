@@ -36,7 +36,8 @@ export default function LeaveGame({
     <div className={className}>
       <ConfirmModal
         buttonLabel={status === 'leaving' ? 'Removing...' : label}
-        buttonRole='tertiary'
+        buttonVariant='tertiary'
+        buttonSize='small'
         message={confirmMessage}
         onConfirm={handleClick}
       />

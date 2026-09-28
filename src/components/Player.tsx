@@ -32,7 +32,8 @@ export default function Player() {
             <li key={character.id} className='pb-4'>
               <Button
                 label={character.name}
-                role='primary'
+                variant='primary'
+                size='large'
                 link={`/characters/${character.id}`}
                 className='text-lg'
               />
@@ -42,7 +43,8 @@ export default function Player() {
       </ul>
       <Button
         label='Add New Character'
-        role='tertiary'
+        variant='tertiary'
+        size='small'
         link='/characters/new'
       />
     </>

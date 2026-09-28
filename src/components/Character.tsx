@@ -9,6 +9,7 @@ import useDataStore from '../hooks/useDataStore';
 import useGameForCharacter from '../hooks/useGameForCharacter';
 import type {Character, Game} from '../utils/types';
 import ConfirmModal from './ConfirmModal';
+import Toast from './Toast';
 
 interface Props {
   character: Character | undefined;
@@ -140,31 +141,40 @@ export default function Character({character, game: initialGame}: Props) {
               buttonLabel={
                 deleteStatus === 'deleting' ? 'Deleting...' : 'Delete'
               }
+              buttonStyle={{anchorName: '--delete-button-anchor'}}
               message={`Are you sure you want to delete ${character.name}? This cannot be undone.`}
               onConfirm={handleDelete}
             />
           )}
           <Button
+            style={{anchorName: '--save-button-anchor'}}
             type='submit'
             label={saveStatus === 'saving' ? 'Saving...' : 'Save'}
-            role='primary'
+            variant='primary'
+            size='large'
           />
         </div>
         <div className='text-center'>
-          {saveStatus === 'saved' && <p role='status'>Saved.</p>}
-          {saveStatus === 'error' && (
-            <p role='alert'>Unable to save this Character. Please try again.</p>
-          )}
-          {deleteStatus === 'error' && (
-            <p role='alert'>
-              Unable to delete this Character. Please try again.
-            </p>
-          )}
+          <Toast
+            message='Character saved.'
+            show={saveStatus === 'saved'}
+            anchorName='--save-button-anchor'
+          />
+          <Toast
+            message='Error saving, please try again.'
+            show={saveStatus === 'error'}
+            anchorName='--save-button-anchor'
+          />
+          <Toast
+            message='Error deleting, please try again.'
+            show={deleteStatus === 'error'}
+            anchorName='--save-button-anchor'
+          />
         </div>
         <div className='flex justify-center text-center'>
           <Button
             label='Back to All Characters'
-            role='secondary'
+            variant='secondary'
             link='/?tab=Player'
             className='mt-4'
           />

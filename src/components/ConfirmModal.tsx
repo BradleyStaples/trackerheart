@@ -2,12 +2,14 @@
 
 import {Modal, ModalBody, ModalHeader} from 'flowbite-react';
 import {useState} from 'react';
-import Button, {type ButtonRole} from './Button';
+import Button, {type ButtonSize, type ButtonVariant} from './Button';
 
 interface Props {
   buttonLabel: string;
   buttonClasses?: string;
-  buttonRole?: ButtonRole;
+  buttonVariant?: ButtonVariant;
+  buttonSize?: ButtonSize;
+  buttonStyle?: React.CSSProperties;
   message: string;
   onConfirm: () => void;
 }
@@ -15,7 +17,9 @@ interface Props {
 export default function ConfirmModal({
   buttonLabel,
   buttonClasses,
-  buttonRole = 'destructive',
+  buttonVariant = 'destructive',
+  buttonSize = 'large',
+  buttonStyle,
   message,
   onConfirm,
 }: Props) {
@@ -24,10 +28,12 @@ export default function ConfirmModal({
   return (
     <>
       <Button
-        role={buttonRole}
+        variant={buttonVariant}
+        size={buttonSize}
         label={buttonLabel}
         onClick={() => setOpenModal(true)}
         className={buttonClasses}
+        style={buttonStyle}
       />
       <Modal
         show={openModal}
@@ -43,7 +49,7 @@ export default function ConfirmModal({
             </h3>
             <div className='flex justify-center gap-4'>
               <Button
-                role='destructive'
+                variant='destructive'
                 label="Yes, I'm sure"
                 onClick={() => {
                   setOpenModal(false);
@@ -51,7 +57,7 @@ export default function ConfirmModal({
                 }}
               />
               <Button
-                role='secondary'
+                variant='secondary'
                 label='No, cancel'
                 onClick={() => setOpenModal(false)}
               />

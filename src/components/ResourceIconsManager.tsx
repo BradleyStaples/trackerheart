@@ -86,7 +86,12 @@ export default function ResourceIconsManager({
                 </select>
               </label>
             )}
-            <Button role='tertiary' label='Clear' onClick={handleClear} />
+            <Button
+              variant='tertiary'
+              size='small'
+              label='Clear'
+              onClick={handleClear}
+            />
           </div>
           <div className='grow'>
             <ResourceIcons
