@@ -6,6 +6,7 @@ import LeaveGame from './LeaveGame';
 import ResourceIconsManager from './ResourceIconsManager';
 import ResourceIcons from './ResourceIcons';
 import useDataStore from '../hooks/useDataStore';
+import useSavedQueryFlag, {SAVED_QUERY_PARAM} from '../hooks/useSavedQueryFlag';
 import useGameForCharacter from '../hooks/useGameForCharacter';
 import type {Character, Game} from '../utils/types';
 import ConfirmModal from './ConfirmModal';
@@ -20,9 +21,10 @@ export default function Character({character, game: initialGame}: Props) {
   const game = useGameForCharacter(character?.id, initialGame);
   const router = useRouter();
   const {saveCharacter, deleteCharacter} = useDataStore();
+  const savedOnCreate = useSavedQueryFlag();
   const [saveStatus, setSaveStatus] = useState<
     'idle' | 'saving' | 'saved' | 'error'
-  >('idle');
+  >(savedOnCreate ? 'saved' : 'idle');
   const [deleteStatus, setDeleteStatus] = useState<
     'idle' | 'deleting' | 'error'
   >('idle');
@@ -53,7 +55,7 @@ export default function Character({character, game: initialGame}: Props) {
         await router.replace(router.asPath);
         setSaveStatus('saved');
       } else {
-        await router.push(`/characters/${id}`);
+        await router.push(`/characters/${id}?${SAVED_QUERY_PARAM}=1`);
       }
     } catch (error) {
       console.error('Unable to save Character', {error});
@@ -135,44 +137,49 @@ export default function Character({character, game: initialGame}: Props) {
           showMaxDropdown
           icon='shield'
         />
-        <div className='mt-8 grid grid-cols-3 gap-4'>
-          <Button label='Home' variant='secondary' link='/' size='full' />
-          <div>
-            {character?.id && (
-              <ConfirmModal
-                buttonLabel={
-                  deleteStatus === 'deleting' ? 'Deleting...' : 'Delete'
-                }
-                buttonStyle={{anchorName: '--delete-button-anchor'}}
-                buttonSize='full'
-                message={`Are you sure you want to delete ${character.name}? This cannot be undone.`}
-                onConfirm={handleDelete}
-              />
-            )}
+        <div className='relative mt-8 h-12'>
+          <div className='absolute left-[-24] grid w-80 grid-cols-3 gap-4'>
+            <Button label='Home' variant='secondary' link='/' size='full' />
+            <div>
+              {character?.id && (
+                <ConfirmModal
+                  buttonLabel={
+                    deleteStatus === 'deleting' ? 'Deleting...' : 'Delete'
+                  }
+                  buttonStyle={{anchorName: '--delete-button-anchor'}}
+                  buttonSize='full'
+                  message={`Are you sure you want to delete ${character.name}? This cannot be undone.`}
+                  onConfirm={handleDelete}
+                />
+              )}
+            </div>
+            <Button
+              style={{anchorName: '--save-button-anchor'}}
+              type='submit'
+              label={saveStatus === 'saving' ? 'Saving...' : 'Save'}
+              variant='primary'
+              size='full'
+            />
           </div>
-          <Button
-            style={{anchorName: '--save-button-anchor'}}
-            type='submit'
-            label={saveStatus === 'saving' ? 'Saving...' : 'Save'}
-            variant='primary'
-            size='full'
-          />
         </div>
         <div className='text-center'>
           <Toast
             message='Character saved.'
+            tone='success'
             show={saveStatus === 'saved'}
             anchorName='--save-button-anchor'
           />
           <Toast
             message='Error saving, please try again.'
+            tone='error'
             show={saveStatus === 'error'}
             anchorName='--save-button-anchor'
           />
           <Toast
             message='Error deleting, please try again.'
+            tone='error'
             show={deleteStatus === 'error'}
-            anchorName='--save-button-anchor'
+            anchorName='--delete-button-anchor'
           />
         </div>
       </form>

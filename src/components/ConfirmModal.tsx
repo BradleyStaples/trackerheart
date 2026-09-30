@@ -44,13 +44,13 @@ export default function ConfirmModal({
         <ModalHeader />
         <ModalBody>
           <div className='text-center'>
-            <h3 className='mb-5 text-lg font-normal text-gray-500 dark:text-gray-400'>
+            <h3 className='mb-5 text-lg font-normal text-gray-500'>
               {message}
             </h3>
             <div className='flex justify-center gap-4'>
               <Button
                 variant='destructive'
-                label="Yes, I'm sure"
+                label='Confirm'
                 onClick={() => {
                   setOpenModal(false);
                   onConfirm();
@@ -58,7 +58,7 @@ export default function ConfirmModal({
               />
               <Button
                 variant='secondary'
-                label='No, cancel'
+                label='Cancel'
                 onClick={() => setOpenModal(false)}
               />
             </div>

@@ -5,9 +5,11 @@ import ResourceIconsManager from './ResourceIconsManager';
 import ResourceIcons from './ResourceIcons';
 import LeaveGame from './LeaveGame';
 import useDataStore from '../hooks/useDataStore';
+import useSavedQueryFlag, {SAVED_QUERY_PARAM} from '../hooks/useSavedQueryFlag';
 import useCharactersInGame from '../hooks/useCharactersInGame';
 import type {Game, Character} from '../utils/types';
 import ConfirmModal from './ConfirmModal';
+import Toast from './Toast';
 
 interface Props {
   game: Game | undefined;
@@ -18,9 +20,10 @@ export default function Game({game, characters: initialCharacters}: Props) {
   const characters = useCharactersInGame(game?.id, initialCharacters);
   const router = useRouter();
   const {saveGame, deleteGame} = useDataStore();
+  const savedOnCreate = useSavedQueryFlag();
   const [saveStatus, setSaveStatus] = useState<
     'idle' | 'saving' | 'saved' | 'error'
-  >('idle');
+  >(savedOnCreate ? 'saved' : 'idle');
   const [deleteStatus, setDeleteStatus] = useState<
     'idle' | 'deleting' | 'error'
   >('idle');
@@ -44,7 +47,7 @@ export default function Game({game, characters: initialCharacters}: Props) {
         await router.replace(router.asPath);
         setSaveStatus('saved');
       } else {
-        await router.push(`/games/${id}`);
+        await router.push(`/games/${id}?${SAVED_QUERY_PARAM}=1`);
       }
     } catch (error) {
       console.error('Unable to save Game', {error});
@@ -109,35 +112,50 @@ export default function Game({game, characters: initialCharacters}: Props) {
           maxLimit={12}
           icon='skull'
         />
-        <div className='mt-8 grid grid-cols-3 gap-4'>
-          <Button label='Home' variant='secondary' link='/' size='full' />
-          <div>
-            {game?.id && (
-              <ConfirmModal
-                buttonLabel={
-                  deleteStatus === 'deleting' ? 'Deleting...' : 'Delete'
-                }
-                message={`Are you sure you want to delete ${game.name}? This cannot be undone.`}
-                onConfirm={handleDelete}
-                buttonSize='full'
-              />
-            )}
+        <div className='relative mt-8 h-12'>
+          <div className='absolute left-[-24] grid w-80 grid-cols-3 gap-4'>
+            <Button label='Home' variant='secondary' link='/' size='full' />
+            <div>
+              {game?.id && (
+                <ConfirmModal
+                  buttonLabel={
+                    deleteStatus === 'deleting' ? 'Deleting...' : 'Delete'
+                  }
+                  buttonStyle={{anchorName: '--delete-button-anchor'}}
+                  message={`Are you sure you want to delete ${game.name}? This cannot be undone.`}
+                  onConfirm={handleDelete}
+                  buttonSize='full'
+                />
+              )}
+            </div>
+            <Button
+              style={{anchorName: '--save-button-anchor'}}
+              type='submit'
+              label={saveStatus === 'saving' ? 'Saving...' : 'Save'}
+              variant='primary'
+              size='full'
+            />
           </div>
-          <Button
-            type='submit'
-            label={saveStatus === 'saving' ? 'Saving...' : 'Save'}
-            variant='primary'
-            size='full'
-          />
         </div>
         <div className='text-center'>
-          {saveStatus === 'saved' && <p role='status'>Saved.</p>}
-          {saveStatus === 'error' && (
-            <p role='alert'>Unable to save this Game. Please try again.</p>
-          )}
-          {deleteStatus === 'error' && (
-            <p role='alert'>Unable to delete this Game. Please try again.</p>
-          )}
+          <Toast
+            message='Game saved.'
+            show={saveStatus === 'saved'}
+            anchorName='--save-button-anchor'
+            tone='success'
+          />
+          <Toast
+            message='Error saving, please try again.'
+            show={saveStatus === 'error'}
+            anchorName='--save-button-anchor'
+            tone='error'
+          />
+          <Toast
+            message='Error deleting, please try again.'
+            show={deleteStatus === 'error'}
+            anchorName='--delete-button-anchor'
+            tone='error'
+          />
         </div>
       </form>
       {characters.length > 0 && (

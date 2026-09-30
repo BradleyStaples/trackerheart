@@ -1,13 +1,17 @@
 import {useEffect, useRef, useState} from 'react';
+import classnames from 'classnames';
 import {Toast, ToastToggle} from 'flowbite-react';
 
-const DISPLAY_DURATION = 5000;
+type Tone = 'info' | 'success' | 'error';
+
+const DISPLAY_DURATION = 3000;
 
 interface Props {
   message: string;
   anchorName: string;
   show: boolean;
   onHide?: () => void;
+  tone?: Tone;
 }
 
 export default function ToastComponent({
@@ -15,6 +19,7 @@ export default function ToastComponent({
   anchorName,
   show,
   onHide,
+  tone = 'info',
 }: Props) {
   const [previousShow, setPreviousShow] = useState(show);
   const [expired, setExpired] = useState(false);
@@ -46,10 +51,22 @@ export default function ToastComponent({
 
   if (!show || expired) return null;
 
+  const toastClasses = classnames({
+    'fixed z-50 min-w-48': true,
+    'bg-blue-200': tone === 'success',
+    'bg-red-200': tone === 'error',
+  });
+
+  const textClasses = classnames({
+    'pl-3 w-full text-center text-sm font-bold': true,
+    'text-blue-700': tone === 'success',
+    'text-red-700': tone === 'error',
+  });
+
   return (
     <span className='relative'>
       <Toast
-        className='fixed z-50 min-w-48'
+        className={toastClasses}
         style={{
           positionAnchor: anchorName,
           insetBlockStart: 'anchor(center)',
@@ -57,9 +74,7 @@ export default function ToastComponent({
           translate: '-50% -50%',
         }}
       >
-        <div className='ml-3 w-full text-center text-sm font-normal'>
-          {message}
-        </div>
+        <div className={textClasses}>{message}</div>
         <ToastToggle onDismiss={hide} />
       </Toast>
     </span>
