@@ -1,5 +1,4 @@
-import {Fragment, useState, type ChangeEvent} from 'react';
-import classnames from 'classnames';
+import {useState, type ChangeEvent} from 'react';
 import Button from './Button';
 import ResourceIcons from './ResourceIcons';
 

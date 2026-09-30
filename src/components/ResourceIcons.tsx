@@ -1,6 +1,5 @@
-import {Fragment, useState, type ChangeEvent} from 'react';
+import {Fragment, type ChangeEvent} from 'react';
 import classnames from 'classnames';
-import Button from './Button';
 
 interface Props {
   value: number;

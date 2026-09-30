@@ -7,6 +7,11 @@ const config = defineConfig([
   ...nextVitals,
   ...nextTs,
   {
+    settings: {
+      // eslint-plugin-react's "detect" calls context.getFilename(), which
+      // ESLint 10 removed. Keep in sync with the installed React.
+      react: {version: '19.3'},
+    },
     rules: {
       '@typescript-eslint/no-unused-vars': ['warn', {varsIgnorePattern: '_'}],
     },

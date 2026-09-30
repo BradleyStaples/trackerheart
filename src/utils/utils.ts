@@ -8,7 +8,7 @@ export function createShareCode() {
     const allCharactersString = integer.toString(36);
     const sixCharacters = allCharactersString.slice(0, 6).toUpperCase();
     return sixCharacters;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('unable to create shareCode', {error});
     return '';
   }
