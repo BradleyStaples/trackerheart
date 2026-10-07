@@ -1,0 +1,183 @@
+rules_version = '2';
+
+// Every user is signed in with Firebase Anonymous Auth, so request.auth.uid
+// identifies the browser. Documents record their owner as ownerUid.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function uid() {
+      return request.auth.uid;
+    }
+
+    function owns(data) {
+      return signedIn() && data.ownerUid == uid();
+    }
+
+    function intIn(value, low, high) {
+      return value is int && value >= low && value <= high;
+    }
+
+    function shortString(value) {
+      return value is string && value.size() <= 100;
+    }
+
+    function exactKeys(data, keys) {
+      return data.keys().hasAll(keys) && data.keys().hasOnly(keys);
+    }
+
+    function onlyChanged(keys) {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(keys);
+    }
+
+    function gamePath(gameId) {
+      return /databases/$(database)/documents/Games/$(gameId);
+    }
+
+    function shareCodePath(code) {
+      return /databases/$(database)/documents/ShareCodes/$(code);
+    }
+
+    function characterPath(characterId) {
+      return /databases/$(database)/documents/Characters/$(characterId);
+    }
+
+    function gameCharacterPath(characterId) {
+      return /databases/$(database)/documents/GameCharacters/$(characterId);
+    }
+
+    match /Games/{gameId} {
+      function validGame(data) {
+        return shortString(data.name)
+          && shortString(data.gameMasterName)
+          && intIn(data.fear, 0, 12)
+          && data.lastModifiedAt == request.time;
+      }
+
+      // Players following their Game's Fear read it by ID. Game IDs are
+      // random and can't be listed by anyone but the GM.
+      allow get: if signedIn();
+      // Queries must filter on ownerUid == the caller's uid.
+      allow list: if owns(resource.data);
+
+      // The share code must be claimed for this Game in the same batch, which
+      // fails if another Game already holds it.
+      allow create: if signedIn()
+        && exactKeys(request.resource.data, ['name', 'gameMasterName', 'fear',
+             'shareCode', 'ownerUid', 'createdAt', 'lastModifiedAt'])
+        && request.resource.data.ownerUid == uid()
+        && request.resource.data.shareCode is string
+        && request.resource.data.shareCode.matches('^[0-9A-Z]{6}$')
+        && request.resource.data.createdAt == request.time
+        && validGame(request.resource.data)
+        && getAfter(shareCodePath(request.resource.data.shareCode)).data.gameId == gameId;
+
+      // ownerUid, shareCode and createdAt never change.
+      allow update: if owns(resource.data)
+        && onlyChanged(['name', 'gameMasterName', 'fear', 'lastModifiedAt'])
+        && validGame(request.resource.data);
+
+      allow delete: if owns(resource.data);
+    }
+
+    // The document ID is the share code. Codes can be read one at a time but
+    // never listed, so they can't be enumerated, and never updated, so a
+    // colliding code fails to create instead of taking over another Game.
+    match /ShareCodes/{code} {
+      allow get: if signedIn();
+      allow list, update: if false;
+
+      allow create: if signedIn()
+        && code.matches('^[0-9A-Z]{6}$')
+        && exactKeys(request.resource.data, ['gameId', 'ownerUid'])
+        && request.resource.data.ownerUid == uid()
+        && getAfter(gamePath(request.resource.data.gameId)).data.ownerUid == uid();
+
+      allow delete: if owns(resource.data);
+    }
+
+    match /Characters/{characterId} {
+      function validCharacter(data) {
+        return shortString(data.name)
+          && shortString(data.playerName)
+          && intIn(data.hope, 0, 6)
+          && intIn(data.maxHitPoints, 0, 12)
+          && intIn(data.hitPoints, 0, data.maxHitPoints)
+          && intIn(data.maxStress, 0, 12)
+          && intIn(data.stress, 0, data.maxStress)
+          && intIn(data.maxArmorSlots, 0, 12)
+          && intIn(data.armorSlots, 0, data.maxArmorSlots)
+          && data.lastModifiedAt == request.time;
+      }
+
+      function isGmOfThisCharacter() {
+        return signedIn()
+          && exists(gameCharacterPath(characterId))
+          && get(gameCharacterPath(characterId)).data.gmUid == uid();
+      }
+
+      // The GM reads the Characters in their Game one document at a time,
+      // since a list query can't run the per-document GameCharacters check.
+      allow get: if owns(resource.data) || isGmOfThisCharacter();
+      // Queries must filter on ownerUid == the caller's uid.
+      allow list: if owns(resource.data);
+
+      allow create: if signedIn()
+        && exactKeys(request.resource.data, ['name', 'playerName', 'hope',
+             'hitPoints', 'maxHitPoints', 'stress', 'maxStress', 'armorSlots',
+             'maxArmorSlots', 'ownerUid', 'createdAt', 'lastModifiedAt'])
+        && request.resource.data.ownerUid == uid()
+        && request.resource.data.createdAt == request.time
+        && validCharacter(request.resource.data);
+
+      allow update: if owns(resource.data)
+        && onlyChanged(['name', 'playerName', 'hope', 'hitPoints',
+             'maxHitPoints', 'stress', 'maxStress', 'armorSlots',
+             'maxArmorSlots', 'lastModifiedAt'])
+        && validCharacter(request.resource.data);
+
+      allow delete: if owns(resource.data);
+    }
+
+    // The document ID is the characterId, since a Character plays in one Game
+    // at a time. playerUid owns the Character and gmUid owns the Game.
+    match /GameCharacters/{characterId} {
+      function isParty() {
+        return signedIn()
+          && (resource.data.playerUid == uid() || resource.data.gmUid == uid());
+      }
+
+      // Requiring the share code proves the player was invited, not just that
+      // they know the Game's ID.
+      function validJoin(data) {
+        let shareCode = get(shareCodePath(data.shareCode));
+        return exactKeys(data, ['characterId', 'gameId', 'playerUid', 'gmUid',
+             'shareCode', 'createdAt', 'lastModifiedAt'])
+          && data.characterId == characterId
+          && data.playerUid == uid()
+          && get(characterPath(characterId)).data.ownerUid == uid()
+          && shareCode.data.gameId == data.gameId
+          && data.gmUid == shareCode.data.ownerUid
+          && data.createdAt == request.time
+          && data.lastModifiedAt == request.time;
+      }
+
+      // Queries must filter on playerUid or gmUid == the caller's uid.
+      allow read: if isParty();
+
+      // Joining a Game, or switching Games by replacing the mapping.
+      allow create: if signedIn() && validJoin(request.resource.data);
+      allow update: if signedIn()
+        && resource.data.playerUid == uid()
+        && validJoin(request.resource.data);
+
+      // The player leaves, or the GM removes the Character or deletes the Game.
+      allow delete: if isParty();
+    }
+
+    // Any path not matched above is denied.
+  }
+}

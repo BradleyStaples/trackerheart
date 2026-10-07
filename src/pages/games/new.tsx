@@ -4,7 +4,7 @@ import Wrapper from '../../components/Wrapper';
 export default function NewGamePage() {
   return (
     <Wrapper>
-      <Game game={undefined} characters={[]} />
+      <Game game={undefined} />
     </Wrapper>
   );
 }

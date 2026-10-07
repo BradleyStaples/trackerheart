@@ -26,7 +26,9 @@ export default function Player() {
         As a Player, Your Characters:
       </h3>
       <ul>
-        {characters.length === 0 && <li>You do not have any Characters.</li>}
+        {characters.length === 0 && (
+          <li className='pb-4'>You do not have any Characters.</li>
+        )}
         {characters.map((character) => {
           return (
             <li key={character.id} className='pb-4'>

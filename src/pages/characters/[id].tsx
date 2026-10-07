@@ -1,37 +1,26 @@
-import type {InferGetServerSidePropsType, GetServerSideProps} from 'next';
+import {useRouter} from 'next/router';
 import Character from '../../components/Character';
+import Button from '../../components/Button';
 import Wrapper from '../../components/Wrapper';
-import type {Character as CharacterType, Game} from '../../utils/types';
-import {getCharacterById, getGameForCharacter} from '../../utils/firestore';
-import {DEVICE_ID_COOKIE} from '../../hooks/useUUID';
+import useCharacter from '../../hooks/useCharacter';
 
-export const getServerSideProps = (async ({req, params}) => {
-  const deviceId = req.cookies[DEVICE_ID_COOKIE] ?? null;
-  let id = params?.id;
-  if (Array.isArray(id)) {
-    id = id[0];
-  }
-  const character = id
-    ? ((await getCharacterById(id, deviceId)) ?? null)
-    : null;
-  const game = character ? await getGameForCharacter(character.id) : null;
-  return {props: {character, game}};
-}) satisfies GetServerSideProps<{
-  character: CharacterType | null;
-  game: Game | null;
-}>;
+// Loaded in the browser rather than with getServerSideProps, since security
+// rules need the user's Firebase Auth sign-in, which only the browser has.
+export default function CharacterPage() {
+  const router = useRouter();
+  const id = typeof router.query.id === 'string' ? router.query.id : undefined;
+  const character = useCharacter(id);
 
-export default function GamePage({
-  character,
-  game,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <Wrapper>
-      <Character
-        key={character?.id}
-        character={character ?? undefined}
-        game={game ?? undefined}
-      />
+      {character === undefined && <p className='text-center'>Loading...</p>}
+      {character === null && (
+        <>
+          <p className='mbe-4 text-center'>Character not found.</p>
+          <Button label='Home' variant='secondary' link='/' size='full' />
+        </>
+      )}
+      {character && <Character key={character.id} character={character} />}
     </Wrapper>
   );
 }

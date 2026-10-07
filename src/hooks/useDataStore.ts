@@ -1,102 +1,39 @@
-import type {Character, Game, GameInput, CharacterInput} from '../utils/types';
-import useUUID from './useUUID';
+import type {GameInput, CharacterInput} from '../utils/types';
 import {
-  getGamesForDevice,
-  getGameById,
-  getCharactersForDevice,
-  getCharacterById,
+  getGamesForCurrentUser,
+  getCharactersForCurrentUser,
   createGame,
   updateGame,
-  deleteGame as deleteGameDoc,
+  deleteGame,
   createCharacter,
   updateCharacter,
-  deleteCharacter as deleteCharacterDoc,
-  getGameByShareCode,
-  addCharacterToGame,
+  deleteCharacter,
+  joinGame,
   removeCharacterFromGame,
 } from '../utils/firestore';
-import {createShareCode} from '../utils/utils';
 
 export default function useDataStore() {
-  const deviceId = useUUID();
+  const getCharacters = () =>
+    getCharactersForCurrentUser().catch((error) => {
+      console.error(error);
+      return [];
+    });
 
-  const getCharacters = () => {
-    if (!deviceId) {
-      return Promise.resolve([] as Character[]);
-    }
-    const characters = getCharactersForDevice(deviceId)
-      .then((characters: Character[]) => {
-        return characters;
-      })
-      .catch((error) => {
-        console.error(error);
-        return [];
-      });
-    return characters;
-  };
+  const getGames = () =>
+    getGamesForCurrentUser().catch((error) => {
+      console.error(error);
+      return [];
+    });
 
-  const getCharacter = (characterId: string) => {
-    if (!deviceId) {
-      return Promise.resolve(undefined);
-    }
-    const character = getCharacterById(characterId, deviceId)
-      .then((character: Character | undefined) => {
-        return character ?? undefined;
-      })
-      .catch((error) => {
-        console.error(error);
-        return undefined;
-      });
-    return character;
-  };
-
-  const getGames = () => {
-    if (!deviceId) {
-      return Promise.resolve([] as Game[]);
-    }
-    const games = getGamesForDevice(deviceId)
-      .then((games: Game[]) => {
-        return games;
-      })
-      .catch((error) => {
-        console.error(error);
-        return [];
-      });
-    return games;
-  };
-
-  const getGame = (gameId: string) => {
-    if (!deviceId) {
-      return Promise.resolve(undefined);
-    }
-    const game = getGameById(gameId, deviceId)
-      .then((game: Game | undefined) => {
-        return game ?? undefined;
-      })
-      .catch((error) => {
-        console.error(error);
-        return undefined;
-      });
-    return game;
-  };
-
-  // Updates the Game when an id is given, otherwise creates it for this
-  // device. Resolves to the Game's id. Errors are left to the caller so the
-  // UI can report them.
+  // Updates the Game when an id is given, otherwise creates it for the
+  // current user. Resolves to the Game's id. Errors are left to the caller so
+  // the UI can report them.
   const saveGame = async ({id, ...input}: GameInput & {id?: string}) => {
     if (id) {
       await updateGame(id, input);
       return id;
     }
-    if (!deviceId) {
-      throw new Error('Cannot create a Game without a device ID.');
-    }
-    const game = await createGame({
-      ...input,
-      shareCode: createShareCode(),
-      deviceId,
-    });
-    return game.id;
+    return createGame(input);
   };
 
   // Same as saveGame, for Characters.
@@ -108,46 +45,20 @@ export default function useDataStore() {
       await updateCharacter(id, input);
       return id;
     }
-    if (!deviceId) {
-      throw new Error('Cannot create a Character without a device ID.');
-    }
-    const character = await createCharacter({...input, deviceId});
-    return character.id;
+    return createCharacter(input);
   };
 
-  // Links the Character to the Game with the given share code. Resolves to
-  // the Game, or undefined when no Game has that share code. Errors are left
-  // to the caller so the UI can report them.
-  const joinGame = async (characterId: string, shareCode: string) => {
-    const game = await getGameByShareCode(shareCode);
-    if (!game) return undefined;
-    await addCharacterToGame(characterId, game.id);
-    return game;
-  };
-
-  // Unlinks the Character from the Game. Errors are left to the caller so the
-  // UI can report them.
-  const leaveGame = (characterId: string, gameId: string) =>
-    removeCharacterFromGame(characterId, gameId);
-
-  // Errors are left to the caller so the UI can report them.
-  const deleteCharacter = (characterId: string) =>
-    deleteCharacterDoc(characterId, deviceId ?? null);
-
-  // Errors are left to the caller so the UI can report them.
-  const deleteGame = (gameId: string) =>
-    deleteGameDoc(gameId, deviceId ?? null);
-
+  // deleteCharacter, deleteGame, joinGame and leaveGame leave errors to the
+  // caller so the UI can report them. joinGame resolves to the Game, or
+  // undefined when no Game has that share code.
   return {
     getCharacters,
-    getCharacter,
     getGames,
-    getGame,
     saveGame,
     saveCharacter,
     deleteCharacter,
     deleteGame,
     joinGame,
-    leaveGame,
+    leaveGame: removeCharacterFromGame,
   };
 }

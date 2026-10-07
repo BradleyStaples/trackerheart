@@ -7,17 +7,16 @@ import LeaveGame from './LeaveGame';
 import useDataStore from '../hooks/useDataStore';
 import useSavedQueryFlag, {SAVED_QUERY_PARAM} from '../hooks/useSavedQueryFlag';
 import useCharactersInGame from '../hooks/useCharactersInGame';
-import type {Game, Character} from '../utils/types';
+import type {Game} from '../utils/types';
 import ConfirmModal from './ConfirmModal';
 import Toast from './Toast';
 
 interface Props {
   game: Game | undefined;
-  characters: Character[];
 }
 
-export default function Game({game, characters: initialCharacters}: Props) {
-  const characters = useCharactersInGame(game?.id, initialCharacters);
+export default function Game({game}: Props) {
+  const characters = useCharactersInGame(game?.id);
   const router = useRouter();
   const {saveGame, deleteGame} = useDataStore();
   const savedOnCreate = useSavedQueryFlag();
@@ -57,8 +56,7 @@ export default function Game({game, characters: initialCharacters}: Props) {
         fear,
       });
       if (game?.id) {
-        // re-run getServerSideProps so the page shows the saved data
-        await router.replace(router.asPath);
+        // the page follows the Game in real time, so it shows the saved data
         setSaveStatus('saved');
       } else {
         await router.push(`/games/${id}?${SAVED_QUERY_PARAM}=1`);
@@ -259,7 +257,6 @@ export default function Game({game, characters: initialCharacters}: Props) {
                   {game?.id && (
                     <LeaveGame
                       characterId={character.id}
-                      gameId={game.id}
                       label='Remove from Game'
                       confirmMessage={`Remove ${character.name} from ${game.name}?`}
                       className='mbs-2 block w-full text-center'

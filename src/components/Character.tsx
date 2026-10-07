@@ -8,17 +8,17 @@ import ResourceIcons from './ResourceIcons';
 import useDataStore from '../hooks/useDataStore';
 import useSavedQueryFlag, {SAVED_QUERY_PARAM} from '../hooks/useSavedQueryFlag';
 import useGameForCharacter from '../hooks/useGameForCharacter';
-import type {Character, Game} from '../utils/types';
+import type {Character} from '../utils/types';
 import ConfirmModal from './ConfirmModal';
 import Toast from './Toast';
 
 interface Props {
   character: Character | undefined;
-  game: Game | undefined;
 }
 
-export default function Character({character, game: initialGame}: Props) {
-  const game = useGameForCharacter(character?.id, initialGame);
+export default function Character({character}: Props) {
+  // undefined while loading, null when the Character isn't in a Game
+  const game = useGameForCharacter(character?.id);
   const router = useRouter();
   const {saveCharacter, deleteCharacter} = useDataStore();
   const savedOnCreate = useSavedQueryFlag();
@@ -51,8 +51,8 @@ export default function Character({character, game: initialGame}: Props) {
         maxArmorSlots: getNumber('armorSlotsMaxValue'),
       });
       if (character?.id) {
-        // re-run getServerSideProps so the page shows the saved data
-        await router.replace(router.asPath);
+        // the page follows the Character in real time, so it shows the saved
+        // data
         setSaveStatus('saved');
       } else {
         await router.push(`/characters/${id}?${SAVED_QUERY_PARAM}=1`);
@@ -206,13 +206,14 @@ export default function Character({character, game: initialGame}: Props) {
         {game && character?.id && (
           <LeaveGame
             characterId={character.id}
-            gameId={game.id}
             label='Leave Game'
             confirmMessage={`Leave ${game.name}?`}
             className='mx-auto mt-6 block w-32 text-center'
           />
         )}
-        {!game && character?.id && <JoinGame characterId={character.id} />}
+        {game === null && character?.id && (
+          <JoinGame characterId={character.id} />
+        )}
       </div>
     </>
   );

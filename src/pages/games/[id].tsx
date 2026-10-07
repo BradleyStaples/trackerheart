@@ -1,31 +1,26 @@
-import type {InferGetServerSidePropsType, GetServerSideProps} from 'next';
+import {useRouter} from 'next/router';
 import Game from '../../components/Game';
-import type {Game as GameType, Character} from '../../utils/types';
-import {getGameById, getCharactersInGame} from '../../utils/firestore';
-import {DEVICE_ID_COOKIE} from '../../hooks/useUUID';
+import Button from '../../components/Button';
 import Wrapper from '../../components/Wrapper';
+import useGame from '../../hooks/useGame';
 
-export const getServerSideProps = (async ({req, params}) => {
-  const deviceId = req.cookies[DEVICE_ID_COOKIE] ?? null;
-  let id = params?.id;
-  if (Array.isArray(id)) {
-    id = id[0];
-  }
-  const game = id ? ((await getGameById(id, deviceId)) ?? null) : null;
-  const characters = game ? await getCharactersInGame(game.id) : [];
-  return {props: {game, characters}};
-}) satisfies GetServerSideProps<{
-  game: GameType | null;
-  characters: Character[];
-}>;
+// Loaded in the browser rather than with getServerSideProps, since security
+// rules need the user's Firebase Auth sign-in, which only the browser has.
+export default function GamePage() {
+  const router = useRouter();
+  const id = typeof router.query.id === 'string' ? router.query.id : undefined;
+  const game = useGame(id);
 
-export default function GamePage({
-  game,
-  characters,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <Wrapper>
-      <Game key={game?.id} game={game ?? undefined} characters={characters} />
+      {game === undefined && <p className='text-center'>Loading...</p>}
+      {game === null && (
+        <>
+          <p className='mbe-4 text-center'>Game not found.</p>
+          <Button label='Home' variant='secondary' link='/' size='full' />
+        </>
+      )}
+      {game && <Game key={game.id} game={game} />}
     </Wrapper>
   );
 }

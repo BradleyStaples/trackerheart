@@ -26,8 +26,10 @@ export default function GameMaster() {
         As GM, Your Games:
       </h3>
       <ul>
-        {games === undefined && <li>Loading...</li>}
-        {games.length === 0 && <li>You do not have any Games.</li>}
+        {games === undefined && <li className='pb-4'>Loading...</li>}
+        {games.length === 0 && (
+          <li className='pb-4'>You do not have any Games.</li>
+        )}
         {games.map((game) => {
           return (
             <li key={game.id} className='pb-4'>

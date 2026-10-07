@@ -4,7 +4,6 @@ import useDataStore from '../hooks/useDataStore';
 
 interface Props {
   characterId: string;
-  gameId: string;
   label: string;
   confirmMessage: string;
   className?: string;
@@ -12,7 +11,6 @@ interface Props {
 
 export default function LeaveGame({
   characterId,
-  gameId,
   label,
   confirmMessage,
   className,
@@ -23,7 +21,7 @@ export default function LeaveGame({
   const handleClick = async () => {
     setStatus('leaving');
     try {
-      await leaveGame(characterId, gameId);
+      await leaveGame(characterId);
       // the page follows the Game in real time, so it updates without a refresh
       setStatus('idle');
     } catch (error) {
