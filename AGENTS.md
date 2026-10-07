@@ -13,6 +13,11 @@ TrackerHeart has three clients that share one Firebase backend:
 Each client folder has its own build tool and its own agent instructions; read
 them before working in that folder (for example, `web/AGENTS.md`).
 
+The plan for adding the native apps, including setup steps, the porting map
+from the web app, and current status, is in `docs/monorepo-plan.md`:
+
+@docs/monorepo-plan.md
+
 ## The backend is the shared contract
 
 No code is shared between the clients, so they stay compatible only by
