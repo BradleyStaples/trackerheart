@@ -24,6 +24,32 @@ export default function ResourceIconsManager({
 }: Props) {
   const array = new Array<string>(maxLimit).fill('');
 
+  if (readOnly) {
+    return (
+      <div role='img' aria-label={`${label}: ${value} of ${maxValue}`}>
+        <div className='font-bold'>{label}:</div>
+        {array.map((_, index) => {
+          const iconNumber = index + 1;
+          const isDisabled = iconNumber > maxValue;
+
+          return (
+            <Fragment key={`icon-${attribute}-${iconNumber}`}>
+              {iconNumber === 7 && <div />}
+              <span
+                className={classnames({
+                  [`icon-${icon}`]: true,
+                  'me-2 inline-block h-6 w-6': true,
+                  'checkbox-icon-filled': iconNumber <= value,
+                  'checkbox-icon-disabled': isDisabled,
+                })}
+              ></span>
+            </Fragment>
+          );
+        })}
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className='font-bold'>{label}:</div>
@@ -34,7 +60,7 @@ export default function ResourceIconsManager({
 
         const radioClasses = classnames({
           'absolute h-6 w-6 appearance-none focus:outline-none focus:ring-3 focus:ring-dh-gold focus rounded-md': true,
-          'cursor-pointer': !readOnly && !isDisabled,
+          'cursor-pointer': !isDisabled,
         });
 
         return (
@@ -52,7 +78,6 @@ export default function ResourceIconsManager({
                 disabled={isDisabled}
                 onChange={handleRadio}
                 value={radioNumber}
-                readOnly={readOnly}
               />
               <span
                 className={classnames({
