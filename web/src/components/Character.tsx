@@ -68,7 +68,7 @@ export default function Character({character}: Props) {
     setDeleteStatus('deleting');
     try {
       await deleteCharacter(character.id);
-      await router.push('/?tab=Player');
+      await router.push('/');
     } catch (error) {
       console.error('Unable to delete Character', {error});
       setDeleteStatus('error');

@@ -2,7 +2,8 @@
 
 TrackerHeart started as a Next.js web app. This plan adds native iOS and
 Android apps in the same repository. Read it before starting work in `ios/` or
-`android/`.
+`android/`. What each app must do, screen by screen, is in
+`docs/requirements.md`.
 
 ## Decisions
 
@@ -113,7 +114,7 @@ comments that explain why, is the spec for the native apps.
 | `utils/firestore.ts`                | `Data/FirebaseRepository.swift`       | `data/FirebaseRepository.kt`         |
 | `utils/utils.ts` (`createShareCode`) | `Data/ShareCode.swift`                | `data/ShareCode.kt`                  |
 | `hooks/use*.ts`                     | `@Observable` view models             | ViewModels with `StateFlow`          |
-| `pages/index.tsx` (GM/Player toggle) | `Views/HomeView.swift`                | `ui/HomeScreen.kt`                   |
+| `pages/index.tsx` | `Views/HomeView.swift`                | `ui/HomeScreen.kt`                   |
 | `pages/games/new.tsx`, `[id].tsx`   | `NewGameView`, `GameView`             | `NewGameScreen`, `GameScreen`        |
 | `pages/characters/new.tsx`, `[id].tsx` | `NewCharacterView`, `CharacterView` | `NewCharacterScreen`, `CharacterScreen` |
 | `components/JoinGame.tsx`           | `JoinGameView`                        | `JoinGameScreen`                     |

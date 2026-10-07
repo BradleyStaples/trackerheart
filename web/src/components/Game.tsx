@@ -72,7 +72,7 @@ export default function Game({game}: Props) {
     setDeleteStatus('deleting');
     try {
       await deleteGame(game.id);
-      await router.push('/?tab=GameMaster');
+      await router.push('/');
     } catch (error) {
       console.error('Unable to delete Game', {error});
       setDeleteStatus('error');

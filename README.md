@@ -3,7 +3,7 @@
 TrackerHeart is a real-time resource tracker for
 [Daggerheart](https://www.daggerheart.com), the tabletop role-playing game. The
 Game Master (GM) and every player at the table see the same numbers, and the
-numbers update live as anyone changes them.
+numbers update for everyone as soon as anyone saves a change.
 
 ## What it does
 
@@ -12,11 +12,13 @@ play, or do both.
 
 ### For Game Masters
 
-- Create a Game with a name, GM name, and starting Fear (defaults to 4).
+- Create a Game with a name and GM name. Fear starts at 0; set it to the number
+  of players once the table is ready.
 - Each Game gets a unique 6-character share code for players to join with. A
   button copies it.
-- On the Game page, set the GM's **Fear** (0–12) and watch every joined
-  Character's Hit Points, Stress, Armor Slots, and Hope update live.
+- On the Game page, set and save the GM's **Fear** (0–12), and see every joined
+  Character's Hit Points, Stress, Armor Slots, and Hope update as their players
+  save them.
 - Remove a Character from the Game.
 
 ### For Players
