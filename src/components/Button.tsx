@@ -25,7 +25,7 @@ export default function Button({
     'rounded-md focus:outline-none focus:ring-3 focus:ring-dh-gold': !!link,
   });
   const classes = classnames({
-    'inline-block bg-gradient-to-r text-center text-sm leading-5 hover:bg-gradient-to-br focus:outline-none cursor-pointer font-bold rounded-md focus:ring-3 focus:ring-dh-gold active:ring-3 active:ring-dh-gold': true,
+    'inline-block bg-linear-to-r text-center text-sm leading-5 hover:bg-linear-to-br focus:outline-none cursor-pointer font-bold rounded-md focus:ring-3 focus:ring-dh-gold active:ring-3 active:ring-dh-gold': true,
     'px-2 py-1': size === 'small',
     'px-2 py-2.5': size === 'medium',
     'px-4 py-2.5': size === 'large',

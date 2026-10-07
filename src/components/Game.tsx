@@ -27,6 +27,20 @@ export default function Game({game, characters: initialCharacters}: Props) {
   const [deleteStatus, setDeleteStatus] = useState<
     'idle' | 'deleting' | 'error'
   >('idle');
+  const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'error'>(
+    'idle',
+  );
+
+  const handleCopy = async () => {
+    if (!game?.shareCode) return;
+    try {
+      await navigator.clipboard.writeText(game.shareCode);
+      setCopyStatus('copied');
+    } catch (error) {
+      console.error('Unable to copy Invite Code', {error});
+      setCopyStatus('error');
+    }
+  };
 
   const handleSubmit = async (event: SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -95,13 +109,24 @@ export default function Game({game, characters: initialCharacters}: Props) {
         {game?.id && (
           <label>
             <span className='font-bold'>Invite Code:</span>
-            <input
-              type='text'
-              readOnly
-              name='shareCode'
-              className={fieldClasses}
-              value={game?.shareCode.split('').join(' ') ?? ''}
-            />
+            <div className='relative'>
+              <input
+                type='text'
+                readOnly
+                name='shareCode'
+                className={`${fieldClasses} pe-16`}
+                value={game?.shareCode.split('').join(' ') ?? ''}
+              />
+              {/* mbe-2 matches the input's margin so the button spans only the field */}
+              <button
+                type='button'
+                onClick={handleCopy}
+                style={{anchorName: '--copy-button-anchor'}}
+                className='text-dh-purple absolute inset-e-0.5 top-0.5 bottom-0.5 mbe-2 cursor-pointer rounded-xs bg-linear-to-r from-teal-300 via-teal-400 to-teal-500 px-2 text-sm font-bold ring-yellow-300 hover:bg-linear-to-br hover:text-teal-900 focus:ring-3 focus:outline-none active:text-teal-900'
+              >
+                Copy
+              </button>
+            </div>
           </label>
         )}
         <ResourceIconsManager
@@ -154,6 +179,20 @@ export default function Game({game, characters: initialCharacters}: Props) {
             message='Error deleting, please try again.'
             show={deleteStatus === 'error'}
             anchorName='--delete-button-anchor'
+            tone='error'
+          />
+          <Toast
+            message='Invite Code copied.'
+            show={copyStatus === 'copied'}
+            onHide={() => setCopyStatus('idle')}
+            anchorName='--copy-button-anchor'
+            tone='info'
+          />
+          <Toast
+            message='Unable to copy, please try again.'
+            show={copyStatus === 'error'}
+            onHide={() => setCopyStatus('idle')}
+            anchorName='--copy-button-anchor'
             tone='error'
           />
         </div>
