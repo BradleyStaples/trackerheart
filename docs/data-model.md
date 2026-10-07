@@ -18,22 +18,21 @@ Field names are case-sensitive. Documents must contain **exactly** the listed
 fields on create. Extra or missing fields are rejected.
 
 `server` means the value must be `FieldValue.serverTimestamp()` (the rules
-compare it to `request.time`). Integers must be stored as integers, not
-doubles.
+compare it to `request.time`). Integers must be stored as integers, not doubles.
 
 ### `Games/{gameId}`
 
 `gameId` is an auto-generated document ID.
 
-| Field            | Type      | Rule                                  | Editable |
-| ---------------- | --------- | ------------------------------------- | -------- |
-| `name`           | string    | at most 100 characters                | yes      |
-| `gameMasterName` | string    | at most 100 characters                | yes      |
-| `fear`           | int       | 0–12                                  | yes      |
+| Field            | Type      | Rule                                   | Editable |
+| ---------------- | --------- | -------------------------------------- | -------- |
+| `name`           | string    | at most 100 characters                 | yes      |
+| `gameMasterName` | string    | at most 100 characters                 | yes      |
+| `fear`           | int       | 0–12                                   | yes      |
 | `shareCode`      | string    | `^[0-9A-Z]{6}$`, claimed in ShareCodes | no       |
-| `ownerUid`       | string    | the GM's uid                          | no       |
-| `createdAt`      | timestamp | server, on create                     | no       |
-| `lastModifiedAt` | timestamp | server, on every write                | yes      |
+| `ownerUid`       | string    | the GM's uid                           | no       |
+| `createdAt`      | timestamp | server, on create                      | no       |
+| `lastModifiedAt` | timestamp | server, on every write                 | yes      |
 
 - **get:** any signed-in user. Players follow their Game's Fear by ID.
 - **list:** only queries filtered on `ownerUid == uid`.
@@ -44,13 +43,13 @@ doubles.
 
 The document ID is the share code. It maps a code to its Game.
 
-| Field      | Type   | Rule                          |
-| ---------- | ------ | ----------------------------- |
-| `gameId`   | string | the Game holding this code    |
-| `ownerUid` | string | the GM's uid                  |
+| Field      | Type   | Rule                       |
+| ---------- | ------ | -------------------------- |
+| `gameId`   | string | the Game holding this code |
+| `ownerUid` | string | the GM's uid               |
 
-- **get:** any signed-in user. **list** and **update:** never, so codes can't
-  be enumerated or taken over.
+- **get:** any signed-in user. **list** and **update:** never, so codes can't be
+  enumerated or taken over.
 - **create:** only in the same batch as the Game it names (see "Creating a
   Game").
 - **delete:** owner only.
@@ -59,23 +58,22 @@ The document ID is the share code. It maps a code to its Game.
 
 `characterId` is an auto-generated document ID.
 
-| Field            | Type      | Rule                      | Editable |
-| ---------------- | --------- | ------------------------- | -------- |
-| `name`           | string    | at most 100 characters    | yes      |
-| `playerName`     | string    | at most 100 characters    | yes      |
-| `hope`           | int       | 0–6                       | yes      |
-| `maxHitPoints`   | int       | 0–12                      | yes      |
-| `hitPoints`      | int       | 0–`maxHitPoints`          | yes      |
-| `maxStress`      | int       | 0–12                      | yes      |
-| `stress`         | int       | 0–`maxStress`             | yes      |
-| `maxArmorSlots`  | int       | 0–12                      | yes      |
-| `armorSlots`     | int       | 0–`maxArmorSlots`         | yes      |
-| `ownerUid`       | string    | the player's uid          | no       |
-| `createdAt`      | timestamp | server, on create         | no       |
-| `lastModifiedAt` | timestamp | server, on every write    | yes      |
+| Field            | Type      | Rule                   | Editable |
+| ---------------- | --------- | ---------------------- | -------- |
+| `name`           | string    | at most 100 characters | yes      |
+| `playerName`     | string    | at most 100 characters | yes      |
+| `hope`           | int       | 0–6                    | yes      |
+| `maxHitPoints`   | int       | 0–12                   | yes      |
+| `hitPoints`      | int       | 0–`maxHitPoints`       | yes      |
+| `maxStress`      | int       | 0–12                   | yes      |
+| `stress`         | int       | 0–`maxStress`          | yes      |
+| `maxArmorSlots`  | int       | 0–12                   | yes      |
+| `armorSlots`     | int       | 0–`maxArmorSlots`      | yes      |
+| `ownerUid`       | string    | the player's uid       | no       |
+| `createdAt`      | timestamp | server, on create      | no       |
+| `lastModifiedAt` | timestamp | server, on every write | yes      |
 
-`hitPoints`, `stress` and `armorSlots` count **marked** slots out of their
-max.
+`hitPoints`, `stress` and `armorSlots` count **marked** slots out of their max.
 
 - **get:** the owner, or the GM of the Game the Character has joined.
 - **list:** only queries filtered on `ownerUid == uid`. The GM can't list a
@@ -107,12 +105,12 @@ Links a Character to the Game it has joined. The document ID is the
 ## Share codes
 
 - Six characters, each drawn **uniformly** from `0-9A-Z`. Use a
-  cryptographically secure random source and discard random bytes ≥ 252 to
-  avoid bias (see `web/src/utils/utils.ts`).
+  cryptographically secure random source and discard random bytes ≥ 252 to avoid
+  bias (see `web/src/utils/utils.ts`).
 - Shown to players with spaces between characters.
 - When a player enters a code, strip all whitespace and uppercase it before
-  matching. If the result doesn't match `^[0-9A-Z]{6}$`, report "no such
-  Game" without querying.
+  matching. If the result doesn't match `^[0-9A-Z]{6}$`, report "no such Game"
+  without querying.
 
 ## Write sequences
 
@@ -126,8 +124,8 @@ must match exactly.
 2. In **one batch**:
    - set `Games/{new id}` with all Game fields
    - set `ShareCodes/{code}` to `{gameId, ownerUid}`
-3. If the batch fails with permission denied, another GM probably took the
-   code at the same moment: start again from step 1, up to 5 attempts in all.
+3. If the batch fails with permission denied, another GM probably took the code
+   at the same moment: start again from step 1, up to 5 attempts in all.
 
 ### Updating a Game or Character
 
@@ -141,14 +139,14 @@ Update only the editable fields, plus `lastModifiedAt` = server timestamp.
 
 ### Creating a Character
 
-Set `Characters/{new id}` with all fields, `ownerUid` = uid, and both
-timestamps = server timestamp.
+Set `Characters/{new id}` with all fields, `ownerUid` = uid, and both timestamps
+= server timestamp.
 
 ### Deleting a Character
 
 1. Query `GameCharacters` where `characterId == characterId` and
-   `playerUid == uid`. (Query rather than delete by ID: deleting a mapping
-   that doesn't exist is rejected.)
+   `playerUid == uid`. (Query rather than delete by ID: deleting a mapping that
+   doesn't exist is rejected.)
 2. In **one batch**, delete the Character and any mapping from step 1.
 
 ### Joining a Game
@@ -171,9 +169,9 @@ Each detail screen follows its data with snapshot listeners:
 - **GM's Game screen:** listen to `Games/{gameId}`; treat a Game whose
   `ownerUid` isn't the caller's as not found. To follow its Characters, listen
   to `GameCharacters` where `gameId == gameId` and `gmUid == uid`, then open
-  **one listener per `Characters/{characterId}`**, adding and removing
-  listeners as mappings come and go. A permission error on one Character
-  means it just left the Game.
+  **one listener per `Characters/{characterId}`**, adding and removing listeners
+  as mappings come and go. A permission error on one Character means it just
+  left the Game.
 - **Player's Character screen:** listen to `Characters/{characterId}`, where
   permission denied means not found. To show the GM's Fear, listen to
   `GameCharacters` where `characterId == characterId` and `playerUid == uid`,
@@ -181,5 +179,5 @@ Each detail screen follows its data with snapshot listeners:
 
 ## Indexes
 
-All queries use only equality filters, which Firestore serves from its
-automatic single-field indexes. No composite indexes are needed.
+All queries use only equality filters, which Firestore serves from its automatic
+single-field indexes. No composite indexes are needed.
