@@ -51,7 +51,7 @@ be `web/`.
 - `firebase/tests/firestore.rules.test.mjs`: Firestore emulator tests covering
   every allow and deny path in the rules, plus the batched deletes the apps
   perform. Rules changes are tested once here instead of in each app. Run with
-  `cd firebase && npm test` (needs Java 21+; the emulator listens on port 8180).
+  `cd firebase && npm test` (needs Java 21+; the emulator listens on port 8080).
 
 ### 3. Android app (`android/`) — not started
 
