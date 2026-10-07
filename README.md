@@ -37,12 +37,12 @@ longer get to them.
 
 ## Repository layout
 
-| Folder      | What it is                                              |
-| ----------- | ------------------------------------------------------- |
-| `web/`      | Next.js web app                                         |
-| `ios/`      | Native iOS app (Swift, SwiftUI) — not started yet       |
-| `android/`  | Native Android app (Kotlin, Compose) — not started yet  |
-| `firebase/` | Firestore security rules and indexes, shared by all apps |
+| Folder      | What it is                                                   |
+| ----------- | ------------------------------------------------------------ |
+| `web/`      | Next.js web app                                              |
+| `ios/`      | Native iOS app (Swift, SwiftUI) — not started yet            |
+| `android/`  | Native Android app (Kotlin, Compose) — not started yet       |
+| `firebase/` | Firestore security rules and their tests, shared by all apps |
 
 ### Web
 
@@ -54,12 +54,18 @@ npm run dev
 
 ### Firebase
 
-Deploy the Firestore rules from the `firebase/` folder:
+The Firestore rules, and the tests every app relies on, live in `firebase/`. The
+tests run against the Firestore emulator, which needs Java 21 or later.
 
 ```sh
 cd firebase
-firebase deploy --only firestore:rules
+npm install
+npm test              # rules tests against the emulator
+npm run deploy:rules  # deploy firestore.rules to production
 ```
+
+`docs/data-model.md` describes the Firestore collections and write sequences
+that every app must follow.
 
 ## License
 

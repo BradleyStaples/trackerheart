@@ -26,7 +26,7 @@ trackerheart/
 ├─ web/          Next.js app (TypeScript, React, Tailwind, Flowbite)
 ├─ ios/          Xcode project in ios/TrackerHeart/, SwiftUI, Firebase via SPM
 ├─ android/      Gradle (Kotlin DSL, version catalog), Compose, Firebase BoM
-├─ firebase/     firebase.json, .firebaserc, firestore.rules, indexes, rules tests
+├─ firebase/     firebase.json, .firebaserc, firestore.rules, rules tests
 ├─ shared/       logos and icon sources, design-tokens.json (copied by hand)
 ├─ docs/         this plan, data-model.md
 └─ .github/      CI workflows, one per folder, filtered by path
@@ -43,13 +43,15 @@ have an `AGENTS.md` that points agents in those IDEs back to this plan. If the
 site's host (for example Vercel) builds from the repo, its root directory must
 be `web/`.
 
-### 2. Document and test the contract — in progress
+### 2. Document and test the contract — done
 
 - `docs/data-model.md`: every collection, field and range; server timestamps;
-  the share-code format; and the exact multi-document write sequences.
-- `firebase/tests/`: Firestore emulator tests covering every allow and deny
-  path in the rules. Rules changes are tested once here instead of in each
-  app.
+  the share-code format; and the exact multi-document write sequences. Native
+  apps implement their repository from this.
+- `firebase/tests/firestore.rules.test.mjs`: Firestore emulator tests covering
+  every allow and deny path in the rules, plus the batched deletes the apps
+  perform. Rules changes are tested once here instead of in each app. Run with
+  `cd firebase && npm test` (needs Java 21+; the emulator listens on port 8180).
 
 ### 3. Android app (`android/`) — not started
 
