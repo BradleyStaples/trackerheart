@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TrackerHeart
 
-## Getting Started
+TrackerHeart is a real-time resource tracker for
+[Daggerheart](https://www.daggerheart.com), the tabletop role-playing game. The
+Game Master (GM) and every player at the table see the same numbers, and the
+numbers update live as anyone changes them.
 
-First, run the development server:
+## What it does
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+The home page lists your Games and your Characters, depending on whether you GM,
+play, or do both.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### For Game Masters
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Create a Game with a name, GM name, and starting Fear (defaults to 4).
+- Each Game gets a unique 6-character share code for players to join with. A
+  button copies it.
+- On the Game page, set the GM's **Fear** (0–12) and watch every joined
+  Character's Hit Points, Stress, Armor Slots, and Hope update live.
+- Remove a Character from the Game.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### For Players
 
-## Learn More
+- Create a Character with a name, player name, and values and max values for:
+  Hit Points, Stress, and Armor Slots.
+- On the Character page, mark and clear **Hit Points**, **Stress**, and **Armor
+  Slots**, and set **Hope** (0–6).
+- Join a Game by entering the GM's share code, then see the GM's Fear amount on
+  the Character page.
+- Leave a Game at any time.
 
-To learn more about Next.js, take a look at the following resources:
+### Accounts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+There is no sign-up or login. Games and Characters you create belong to your
+browser. If you clear the site data or switch browsers or devices, you can no
+longer get to them.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## License
 
-## Deploy on Vercel
+The code is released under the [MIT License](LICENSE).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+TrackerHeart is an independent product published under the Darrington Press
+Community Gaming License. It includes material from the Daggerheart System
+Reference Document 1.0, © Critical Role, LLC. See the in-app
+[License & Credits](src/pages/license.tsx) page for details.
