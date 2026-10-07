@@ -35,6 +35,32 @@ There is no sign-up or login. Games and Characters you create belong to your
 browser. If you clear the site data or switch browsers or devices, you can no
 longer get to them.
 
+## Repository layout
+
+| Folder      | What it is                                              |
+| ----------- | ------------------------------------------------------- |
+| `web/`      | Next.js web app                                         |
+| `ios/`      | Native iOS app (Swift, SwiftUI) — not started yet       |
+| `android/`  | Native Android app (Kotlin, Compose) — not started yet  |
+| `firebase/` | Firestore security rules and indexes, shared by all apps |
+
+### Web
+
+```sh
+cd web
+npm install
+npm run dev
+```
+
+### Firebase
+
+Deploy the Firestore rules from the `firebase/` folder:
+
+```sh
+cd firebase
+firebase deploy --only firestore:rules
+```
+
 ## License
 
 The code is released under the [MIT License](LICENSE).
@@ -42,4 +68,4 @@ The code is released under the [MIT License](LICENSE).
 TrackerHeart is an independent product published under the Darrington Press
 Community Gaming License. It includes material from the Daggerheart System
 Reference Document 1.0, © Critical Role, LLC. See the in-app
-[License & Credits](src/pages/license.tsx) page for details.
+[License & Credits](web/src/pages/license.tsx) page for details.

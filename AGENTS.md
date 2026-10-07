@@ -1,9 +1,27 @@
-<!-- BEGIN:nextjs-agent-rules -->
+# TrackerHeart monorepo
 
-# This is NOT the Next.js you know
+TrackerHeart has three clients that share one Firebase backend:
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+| Folder      | What it is                                         | Open with      |
+| ----------- | -------------------------------------------------- | -------------- |
+| `web/`      | Next.js web app (TypeScript, React, Tailwind)      | VS Code        |
+| `ios/`      | Native iOS app (Swift, SwiftUI)                    | Xcode          |
+| `android/`  | Native Android app (Kotlin, Jetpack Compose)       | Android Studio |
+| `firebase/` | Firestore security rules, indexes, and rules tests | VS Code        |
+| `docs/`     | Shared docs, including the Firestore data model    |                |
 
-This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+Each client folder has its own build tool and its own agent instructions; read
+them before working in that folder (for example, `web/AGENTS.md`).
 
-<!-- END:nextjs-agent-rules -->
+## The backend is the shared contract
+
+No code is shared between the clients, so they stay compatible only by
+following the same Firestore contract: collection names, document fields and
+ranges, and the batched write sequences. `firebase/firestore.rules` enforces
+it on the server.
+
+Any change to the schema or rules must update, together:
+
+1. `firebase/firestore.rules` and its tests
+2. `docs/data-model.md`
+3. every client that reads or writes the affected documents
